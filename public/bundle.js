@@ -45,7 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(1);
-	module.exports = __webpack_require__(334);
+	module.exports = __webpack_require__(336);
 
 
 /***/ },
@@ -78,6 +78,18 @@
 
 	var _note_form2 = _interopRequireDefault(_note_form);
 
+	var _login = __webpack_require__(334);
+
+	var _login2 = _interopRequireDefault(_login);
+
+	var _signup = __webpack_require__(335);
+
+	var _signup2 = _interopRequireDefault(_signup);
+
+	var _logout = __webpack_require__(417);
+
+	var _logout2 = _interopRequireDefault(_logout);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -92,21 +104,18 @@
 	    return _react2.default.createElement(
 	      'div',
 	      { className: 'columns' },
-	      _react2.default.createElement('div', { className: 'column is-2' }),
 	      _react2.default.createElement(
 	        'div',
-	        { className: 'column is-auto' },
+	        { className: 'column is-2' },
 	        _react2.default.createElement(
 	          'h1',
 	          { className: 'title' },
 	          'The Hoick Notes'
-	        ),
-	        _react2.default.createElement(
-	          _reactRouter.Link,
-	          { to: '/', className: 'button is-primary' },
-	          'Home'
-	        ),
-	        ' ',
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'column is-8' },
 	        _react2.default.createElement(
 	          _reactRouter.Link,
 	          { to: '/notes', className: 'button is-primary' },
@@ -118,10 +127,14 @@
 	          { to: '/notes/new', className: 'button' },
 	          'New Note'
 	        ),
+	        _react2.default.createElement(
+	          _reactRouter.Link,
+	          { to: '/logout', className: 'button is-info is-outlined is-pulled-right' },
+	          'Log Out'
+	        ),
 	        _react2.default.createElement('hr', null),
 	        this.props.children
-	      ),
-	      _react2.default.createElement('div', { className: 'column is-2' })
+	      )
 	    );
 	  }
 	});
@@ -152,6 +165,9 @@
 	          _react2.default.createElement(_reactRouter.Route, { path: '/notes/new', component: _note_form2.default }),
 	          _react2.default.createElement(_reactRouter.Route, { path: '/notes/:id', component: _note2.default }),
 	          _react2.default.createElement(_reactRouter.Route, { path: '/notes/:id/edit', component: _note_form2.default }),
+	          _react2.default.createElement(_reactRouter.Route, { path: '/login', component: _login2.default }),
+	          _react2.default.createElement(_reactRouter.Route, { path: '/signup', component: _signup2.default }),
+	          _react2.default.createElement(_reactRouter.Route, { path: '/logout', component: _logout2.default }),
 	          _react2.default.createElement(_reactRouter.Route, { path: '*', component: _notes2.default })
 	        )
 	      );
@@ -24805,6 +24821,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactCookie = __webpack_require__(418);
+
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+
 	var _note_item = __webpack_require__(218);
 
 	var _note_item2 = _interopRequireDefault(_note_item);
@@ -24832,6 +24852,10 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Notes).call(this, props));
 
 	    _this.state = { notes: [] };
+
+	    if (!_reactCookie2.default.load('username')) {
+	      _this.props.history.push('/login');
+	    }
 
 	    store.getNotes(function (error, notes) {
 	      if (error) {
@@ -25071,6 +25095,42 @@
 	          callback(_error5, result);
 	        }
 	      });
+	    }
+	  }, {
+	    key: 'createUser',
+	    value: function createUser(username, password, callback) {
+	      var user = new _parse2.default.User();
+	      user.set('username', username);
+	      user.set('password', password);
+
+	      user.signUp(null, {
+	        success: function success(user) {
+	          t;
+	          callback(null, { user: user });
+	        },
+	        error: function error(user, _error6) {
+	          callback(_error6, { status: _error6.status });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'signIn',
+	    value: function signIn(username, password, callback) {
+	      _parse2.default.User.logIn(username, password, {
+	        success: function success(user) {
+	          console.log('store.signIn user:', user);
+	          callback(null, { user: user });
+	        },
+	        error: function error(user, _error7) {
+	          callback(_error7, { status: _error7.status });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'signOut',
+	    value: function signOut(username) {
+	      // Parse.User.logout();
+	      _parse2.default.User.logOut();
 	    }
 	  }]);
 
@@ -36358,6 +36418,10 @@
 
 	var _reactRouter = __webpack_require__(160);
 
+	var _reactCookie = __webpack_require__(418);
+
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+
 	var _store = __webpack_require__(219);
 
 	var _store2 = _interopRequireDefault(_store);
@@ -36381,6 +36445,10 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Note).call(this, props));
 
 	    _this.state = { id: '', title: '', text: '', user: {}, tags: [] };
+
+	    if (!_reactCookie2.default.load('username')) {
+	      _this.props.history.push('/login');
+	    }
 
 	    store.findNote(_this.props.params.id, function (error, note) {
 	      console.log('note:', note);
@@ -36496,6 +36564,10 @@
 
 	var _reactRouter = __webpack_require__(160);
 
+	var _reactCookie = __webpack_require__(418);
+
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+
 	var _store = __webpack_require__(219);
 
 	var _store2 = _interopRequireDefault(_store);
@@ -36520,6 +36592,10 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(NoteForm).call(this, props));
 
 	    _this.state = { id: '', title: '', text: '', user: {}, tags: [], new: true };
+
+	    if (!_reactCookie2.default.load('username')) {
+	      _this.props.history.push('/login');
+	    }
 
 	    if (props.route.path != '/notes/new') {
 	      store.findNote(_this.props.params.id, function (error, note) {
@@ -36721,13 +36797,325 @@
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(160);
+
+	var _reactCookie = __webpack_require__(418);
+
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+
+	var _store = __webpack_require__(219);
+
+	var _store2 = _interopRequireDefault(_store);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var store = new _store2.default();
+
+	var Login = function (_Component) {
+	  _inherits(Login, _Component);
+
+	  function Login(props) {
+	    _classCallCheck(this, Login);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Login).call(this, props));
+
+	    _this.state = {
+	      username: '',
+	      password: '',
+	      errorMessage: '',
+	      messageVisible: false
+	    };
+	    return _this;
+	  }
+
+	  _createClass(Login, [{
+	    key: 'login',
+	    value: function login() {
+	      var _this2 = this;
+
+	      console.log('logging in...');
+
+	      store.signIn(this.state.username, this.state.password, function (error, user) {
+	        console.log('error:', error, 'user:', user);
+	        if (error) {
+	          _this2.setState({ errorMessage: error.message, messageVisible: true });
+	        } else {
+	          console.log('this.state.username:', _this2.state.username);
+	          _reactCookie2.default.save('username', _this2.state.username);
+	          _this2.props.history.push('/notes');
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'card' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'card-content' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: this.state.messageVisible ? 'columns' : 'columns hidden' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-8' },
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'notification is-danger' },
+	                  _react2.default.createElement('button', { className: 'delete', onClick: function onClick(event) {
+	                      return _this3.setState({ messageVisible: false });
+	                    } }),
+	                  this.state.errorMessage
+	                )
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'columns' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4' },
+	                _react2.default.createElement('input', { name: 'username', id: 'title', type: 'text', placeholder: 'Username', onChange: function onChange(event) {
+	                    return _this3.setState({ username: event.target.value });
+	                  } })
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'columns' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4' },
+	                _react2.default.createElement('input', { name: 'password', id: 'password', type: 'password', placeholder: 'Password', onChange: function onChange(event) {
+	                    return _this3.setState({ password: event.target.value });
+	                  } })
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'columns' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4 control' },
+	                _react2.default.createElement('input', { type: 'submit', className: 'button is-success', value: 'Login', onClick: this.login.bind(this) })
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4 control' },
+	                _react2.default.createElement(
+	                  _reactRouter.Link,
+	                  { to: '/signup' },
+	                  'I don\'t have an account...'
+	                )
+	              )
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Login;
+	}(_react.Component);
+
+	exports.default = Login;
+
+/***/ },
+/* 335 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(160);
+
+	var _store = __webpack_require__(219);
+
+	var _store2 = _interopRequireDefault(_store);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var store = new _store2.default();
+
+	var Signup = function (_Component) {
+	  _inherits(Signup, _Component);
+
+	  function Signup(props) {
+	    _classCallCheck(this, Signup);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Signup).call(this, props));
+
+	    _this.state = {
+	      username: '',
+	      password: '',
+	      confirmPass: '',
+	      errorMessage: '',
+	      messageVisible: false
+	    };
+	    return _this;
+	  }
+
+	  _createClass(Signup, [{
+	    key: 'signup',
+	    value: function signup() {
+	      var _this2 = this;
+
+	      console.log('signing up...');
+	      if (this.state.password !== this.state.confirmPass) {
+	        return this.setState({ errorMessage: 'Your passwords do not match', messageVisible: true });
+	      }
+
+	      store.createUser(this.state.username, this.state.password, function (error, user) {
+	        if (error) {
+	          _this2.setState({ errorMessage: error.message, messageVisible: true });
+	        } else {
+	          _this2.props.history.push('/notes');
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'card' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'card-content' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: this.state.messageVisible ? 'columns' : 'columns hidden' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-8' },
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'notification is-danger' },
+	                  _react2.default.createElement('button', { className: 'delete', onClick: function onClick(event) {
+	                      return _this3.setState({ messageVisible: false });
+	                    } }),
+	                  this.state.errorMessage
+	                )
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'columns' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4' },
+	                _react2.default.createElement('input', { name: 'username', id: 'title', type: 'text', placeholder: 'Username', onChange: function onChange(event) {
+	                    return _this3.setState({ username: event.target.value });
+	                  } })
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'columns' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4' },
+	                _react2.default.createElement('input', { name: 'password', id: 'password', type: 'password', placeholder: 'Password', onChange: function onChange(event) {
+	                    return _this3.setState({ password: event.target.value });
+	                  } })
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'columns' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4' },
+	                _react2.default.createElement('input', { name: 'confirm_pass', id: 'confirm_pass', type: 'password', placeholder: 'Confirm Password', onChange: function onChange(event) {
+	                    return _this3.setState({ confirmPass: event.target.value });
+	                  } })
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'columns' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4 control' },
+	                _react2.default.createElement('input', { type: 'submit', className: 'button is-success', value: 'Sign Up', onClick: this.signup.bind(this) })
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4 control' },
+	                _react2.default.createElement(
+	                  _reactRouter.Link,
+	                  { to: '/login' },
+	                  'I have an account...'
+	                )
+	              )
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Signup;
+	}(_react.Component);
+
+	exports.default = Signup;
+
+/***/ },
+/* 336 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(335);
+	var content = __webpack_require__(337);
 	if (typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(337)(content, {});
+	var update = __webpack_require__(339)(content, {});
 	if (content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if (false) {
@@ -36746,21 +37134,21 @@
 	}
 
 /***/ },
-/* 335 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(336)();
+	exports = module.exports = __webpack_require__(338)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, menu, nav, section, time, mark, audio, video, details, summary {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font-weight: normal;\n  vertical-align: baseline;\n  background: transparent; }\n\narticle, aside, figure, footer, header, nav, section, details, summary {\n  display: block; }\n\nhtml {\n  box-sizing: border-box; }\n\n*,\n*:before,\n*:after {\n  box-sizing: inherit; }\n\nimg,\nobject,\nembed {\n  max-width: 100%; }\n\nhtml {\n  overflow-y: scroll; }\n\nul {\n  list-style: none; }\n\nblockquote, q {\n  quotes: none; }\n\nblockquote:before,\nblockquote:after,\nq:before,\nq:after {\n  content: '';\n  content: none; }\n\na {\n  margin: 0;\n  padding: 0;\n  font-size: 100%;\n  vertical-align: baseline;\n  background: transparent; }\n\ndel {\n  text-decoration: line-through; }\n\nabbr[title], dfn[title] {\n  border-bottom: 1px dotted #000;\n  cursor: help; }\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n\nth {\n  font-weight: bold;\n  vertical-align: bottom; }\n\ntd {\n  font-weight: normal;\n  vertical-align: top; }\n\nhr {\n  display: block;\n  height: 1px;\n  border: 0;\n  border-top: 1px solid #ccc;\n  margin: 1em 0;\n  padding: 0; }\n\ninput, select {\n  vertical-align: middle; }\n\npre {\n  white-space: pre;\n  white-space: pre-wrap;\n  white-space: pre-line;\n  word-wrap: break-word; }\n\ninput[type=\"radio\"] {\n  vertical-align: text-bottom; }\n\ninput[type=\"checkbox\"] {\n  vertical-align: bottom; }\n\nselect, input, textarea {\n  font: 99% sans-serif; }\n\ntable {\n  font-size: inherit;\n  font: 100%; }\n\nsmall {\n  font-size: 85%; }\n\nstrong {\n  font-weight: bold; }\n\ntd, td img {\n  vertical-align: top; }\n\nsub, sup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative; }\n\nsup {\n  top: -0.5em; }\n\nsub {\n  bottom: -0.25em; }\n\npre, code, kbd, samp {\n  font-family: monospace, sans-serif; }\n\nlabel,\ninput[type=button],\ninput[type=submit],\ninput[type=file],\nbutton {\n  cursor: pointer; }\n\nbutton, input, select, textarea {\n  margin: 0; }\n\nbutton,\ninput[type=button] {\n  width: auto;\n  overflow: visible; }\n\n@keyframes spin-around {\n  from {\n    transform: rotate(0deg); }\n  to {\n    transform: rotate(359deg); } }\n\nhtml {\n  background: #f5f7fa;\n  font-size: 14px;\n  -moz-osx-font-smoothing: grayscale;\n  -webkit-font-smoothing: antialiased;\n  min-width: 300px;\n  overflow-x: hidden;\n  overflow-y: scroll;\n  text-rendering: optimizeLegibility; }\n\nbody,\nbutton,\ninput,\nselect,\ntextarea {\n  font-family: \"Helvetica Neue\", \"Helvetica\", \"Arial\", sans-serif; }\n\ncode,\npre {\n  -moz-osx-font-smoothing: auto;\n  -webkit-font-smoothing: auto;\n  font-family: monospace;\n  line-height: 1.25; }\n\nbody {\n  color: #69707a;\n  font-size: 1rem;\n  line-height: 1.428571428571429; }\n\na {\n  color: #1fc8db;\n  cursor: pointer;\n  text-decoration: none;\n  transition: none 86ms ease-out; }\n  a:hover {\n    color: #222324; }\n\ncode {\n  background: #f5f7fa;\n  color: #ed6c63;\n  font-size: 12px;\n  font-weight: normal;\n  padding: 1px 2px 2px; }\n\nhr {\n  border-top-color: #d3d6db;\n  margin: 20px 0; }\n\nimg {\n  max-height: 100%;\n  max-width: 100%; }\n\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  vertical-align: baseline; }\n\nsmall {\n  font-size: 11px; }\n\nstrong {\n  color: #222324; }\n\narticle,\naside,\nfigure,\nfooter,\nheader,\nhgroup,\nsection {\n  display: block; }\n\npre {\n  background: #f5f7fa;\n  color: #69707a;\n  white-space: pre;\n  word-wrap: normal; }\n  pre code {\n    background: #f5f7fa;\n    color: #69707a;\n    display: block;\n    overflow-x: auto;\n    padding: 16px 20px; }\n\ntable {\n  width: 100%; }\n  table th,\n  table td {\n    text-align: left;\n    vertical-align: top; }\n  table th {\n    color: #222324; }\n\n.container {\n  margin: 0 auto;\n  max-width: 960px;\n  position: relative; }\n\n.fa {\n  font-size: 21px;\n  text-align: center;\n  vertical-align: top; }\n\n.content.is-medium {\n  font-size: 18px; }\n  .content.is-medium code {\n    font-size: 14px; }\n\n.content.is-large {\n  font-size: 24px; }\n  .content.is-large code {\n    font-size: 18px; }\n\n.content:not(:last-child) {\n  margin-bottom: 20px; }\n\n.content h1,\n.content h2,\n.content h3,\n.content h4,\n.content h5,\n.content h6 {\n  color: #222324;\n  font-weight: 300;\n  line-height: 1.125;\n  margin-bottom: 20px; }\n\n.content h1:not(:first-child),\n.content h2:not(:first-child),\n.content h3:not(:first-child) {\n  margin-top: 40px; }\n\n.content h1 {\n  font-size: 2em; }\n\n.content h2 {\n  font-size: 1.75em; }\n\n.content h3 {\n  font-size: 1.5em; }\n\n.content h4 {\n  font-size: 1.25em; }\n\n.content h5 {\n  font-size: 1.125em; }\n\n.content h6 {\n  font-size: 1em; }\n\n.content p:not(:last-child) {\n  margin-bottom: 1em; }\n\n.content li + li {\n  margin-top: 0.25em; }\n\n.content ol {\n  list-style: decimal outside;\n  margin: 1em 2em; }\n\n.content ul {\n  list-style: disc outside;\n  margin: 1em 2em; }\n  .content ul ul {\n    list-style-type: circle;\n    margin-top: 0.5em; }\n    .content ul ul ul {\n      list-style-type: square; }\n\n.content blockquote {\n  background: #f5f7fa;\n  border-left: 5px solid #d3d6db;\n  padding: 1.5em; }\n  .content blockquote:not(:last-child) {\n    margin-bottom: 1em; }\n\n.highlight {\n  background-color: #fdf6e3;\n  color: #586e75; }\n  .highlight .c {\n    color: #93a1a1; }\n  .highlight .err,\n  .highlight .g {\n    color: #586e75; }\n  .highlight .k {\n    color: #859900; }\n  .highlight .l,\n  .highlight .n {\n    color: #586e75; }\n  .highlight .o {\n    color: #859900; }\n  .highlight .x {\n    color: #cb4b16; }\n  .highlight .p {\n    color: #586e75; }\n  .highlight .cm {\n    color: #93a1a1; }\n  .highlight .cp {\n    color: #859900; }\n  .highlight .c1 {\n    color: #93a1a1; }\n  .highlight .cs {\n    color: #859900; }\n  .highlight .gd {\n    color: #2aa198; }\n  .highlight .ge {\n    color: #586e75;\n    font-style: italic; }\n  .highlight .gr {\n    color: #dc322f; }\n  .highlight .gh {\n    color: #cb4b16; }\n  .highlight .gi {\n    color: #859900; }\n  .highlight .go,\n  .highlight .gp {\n    color: #586e75; }\n  .highlight .gs {\n    color: #586e75;\n    font-weight: bold; }\n  .highlight .gu {\n    color: #cb4b16; }\n  .highlight .gt {\n    color: #586e75; }\n  .highlight .kc {\n    color: #cb4b16; }\n  .highlight .kd {\n    color: #268bd2; }\n  .highlight .kn,\n  .highlight .kp {\n    color: #859900; }\n  .highlight .kr {\n    color: #268bd2; }\n  .highlight .kt {\n    color: #dc322f; }\n  .highlight .ld {\n    color: #586e75; }\n  .highlight .m,\n  .highlight .s {\n    color: #2aa198; }\n  .highlight .na {\n    color: #B58900; }\n  .highlight .nb {\n    color: #586e75; }\n  .highlight .nc {\n    color: #268bd2; }\n  .highlight .no {\n    color: #cb4b16; }\n  .highlight .nd {\n    color: #268bd2; }\n  .highlight .ni,\n  .highlight .ne {\n    color: #cb4b16; }\n  .highlight .nf {\n    color: #268bd2; }\n  .highlight .nl,\n  .highlight .nn,\n  .highlight .nx,\n  .highlight .py {\n    color: #586e75; }\n  .highlight .nt,\n  .highlight .nv {\n    color: #268bd2; }\n  .highlight .ow {\n    color: #859900; }\n  .highlight .w {\n    color: #586e75; }\n  .highlight .mf,\n  .highlight .mh,\n  .highlight .mi,\n  .highlight .mo {\n    color: #2aa198; }\n  .highlight .sb {\n    color: #93a1a1; }\n  .highlight .sc {\n    color: #2aa198; }\n  .highlight .sd {\n    color: #586e75; }\n  .highlight .s2 {\n    color: #2aa198; }\n  .highlight .se {\n    color: #cb4b16; }\n  .highlight .sh {\n    color: #586e75; }\n  .highlight .si,\n  .highlight .sx {\n    color: #2aa198; }\n  .highlight .sr {\n    color: #dc322f; }\n  .highlight .s1,\n  .highlight .ss {\n    color: #2aa198; }\n  .highlight .bp,\n  .highlight .vc,\n  .highlight .vg,\n  .highlight .vi {\n    color: #268bd2; }\n  .highlight .il {\n    color: #2aa198; }\n\n.is-centered {\n  text-align: center; }\n\n.is-left {\n  text-align: left; }\n\n.is-right {\n  text-align: right; }\n\n.is-block {\n  display: block; }\n\n.is-inline {\n  display: inline; }\n\n.is-flex {\n  display: flex; }\n\n.is-clearfix:after {\n  clear: both;\n  content: \" \";\n  display: table; }\n\n.is-pulled-left {\n  float: left; }\n\n.is-pulled-right {\n  float: right; }\n\n.is-fullwidth {\n  width: 100%; }\n\n@media screen and (max-width: 768px) {\n  .is-hidden-mobile {\n    display: none !important; } }\n\n@media screen and (min-width: 769px) {\n  .is-hidden-tablet {\n    display: none !important; } }\n\n@media screen and (max-width: 979px) {\n  .is-hidden-touch {\n    display: none !important; } }\n\n@media screen and (min-width: 980px) {\n  .is-hidden-desktop {\n    display: none !important; } }\n\n.is-disabled {\n  pointer-events: none; }\n\n.is-marginless {\n  margin: 0 !important; }\n\n.is-unselectable {\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.input, .textarea {\n  -moz-appearance: none;\n  -webkit-appearance: none;\n  background: white;\n  border: 1px solid #d3d6db;\n  border-radius: 3px;\n  color: #222324;\n  display: inline-block;\n  font-size: 14px;\n  height: 32px;\n  line-height: 24px;\n  padding: 3px 8px;\n  position: relative;\n  vertical-align: top;\n  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);\n  display: block;\n  max-width: 100%;\n  width: 100%; }\n  .input:hover, .textarea:hover {\n    border-color: #aeb1b5; }\n  .input:active, .textarea:active, .input:focus, .textarea:focus {\n    border-color: #1fc8db;\n    outline: none; }\n  .input[disabled], [disabled].textarea, .input[disabled]:hover, [disabled].textarea:hover {\n    background: #f5f7fa;\n    border-color: #d3d6db; }\n    .input[disabled]::-moz-placeholder, [disabled].textarea::-moz-placeholder, .input[disabled]:hover::-moz-placeholder, [disabled].textarea:hover::-moz-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .input[disabled]::-webkit-input-placeholder, [disabled].textarea::-webkit-input-placeholder, .input[disabled]:hover::-webkit-input-placeholder, [disabled].textarea:hover::-webkit-input-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .input[disabled]:-moz-placeholder, [disabled].textarea:-moz-placeholder, .input[disabled]:hover:-moz-placeholder, [disabled].textarea:hover:-moz-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .input[disabled]:-ms-input-placeholder, [disabled].textarea:-ms-input-placeholder, .input[disabled]:hover:-ms-input-placeholder, [disabled].textarea:hover:-ms-input-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n  .input[type=\"search\"], [type=\"search\"].textarea {\n    border-radius: 290486px; }\n  .input.is-flat, .is-flat.textarea {\n    border: none;\n    box-shadow: none;\n    padding: 4px 8px; }\n  .input.is-small, .is-small.textarea {\n    border-radius: 2px;\n    font-size: 11px;\n    height: 24px;\n    line-height: 16px;\n    padding: 3px 6px; }\n    .input.is-small.is-flat, .is-small.is-flat.textarea {\n      padding: 4px 6px; }\n  .input.is-medium, .is-medium.textarea {\n    font-size: 18px;\n    height: 40px;\n    line-height: 32px;\n    padding: 3px 10px; }\n    .input.is-medium.is-flat, .is-medium.is-flat.textarea {\n      padding: 4px 10px; }\n  .input.is-large, .is-large.textarea {\n    font-size: 24px;\n    height: 48px;\n    line-height: 40px;\n    padding: 3px 12px; }\n    .input.is-large.is-flat, .is-large.is-flat.textarea {\n      padding: 4px 12px; }\n  .input.is-fullwidth, .is-fullwidth.textarea {\n    display: block;\n    width: 100%; }\n  .input.is-inline, .is-inline.textarea {\n    display: inline;\n    width: auto; }\n\n.textarea {\n  line-height: 1.2;\n  max-height: 600px;\n  max-width: 100%;\n  min-height: 120px;\n  min-width: 100%;\n  padding: 10px;\n  resize: vertical; }\n\n.checkbox, .menu-checkbox, .radio {\n  cursor: pointer;\n  display: inline-block;\n  line-height: 16px;\n  padding-left: 18px;\n  position: relative;\n  vertical-align: top; }\n  .checkbox input, .menu-checkbox input, .radio input {\n    -moz-appearance: none;\n    -webkit-appearance: none;\n    background: white;\n    border: 1px solid #d3d6db;\n    border-radius: 3px;\n    color: #222324;\n    display: inline-block;\n    font-size: 14px;\n    height: 32px;\n    line-height: 24px;\n    padding: 3px 8px;\n    position: relative;\n    vertical-align: top;\n    border-radius: 1px;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);\n    cursor: pointer;\n    float: left;\n    height: 14px;\n    left: 0;\n    outline: none;\n    padding: 0;\n    position: absolute;\n    top: 1px;\n    width: 14px; }\n    .checkbox input:hover, .menu-checkbox input:hover, .radio input:hover {\n      border-color: #aeb1b5; }\n    .checkbox input:active, .menu-checkbox input:active, .radio input:active, .checkbox input:focus, .menu-checkbox input:focus, .radio input:focus {\n      border-color: #1fc8db;\n      outline: none; }\n    .checkbox input[disabled], .menu-checkbox input[disabled], .radio input[disabled], .checkbox input[disabled]:hover, .menu-checkbox input[disabled]:hover, .radio input[disabled]:hover {\n      background: #f5f7fa;\n      border-color: #d3d6db; }\n      .checkbox input[disabled]::-moz-placeholder, .menu-checkbox input[disabled]::-moz-placeholder, .radio input[disabled]::-moz-placeholder, .checkbox input[disabled]:hover::-moz-placeholder, .menu-checkbox input[disabled]:hover::-moz-placeholder, .radio input[disabled]:hover::-moz-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .checkbox input[disabled]::-webkit-input-placeholder, .menu-checkbox input[disabled]::-webkit-input-placeholder, .radio input[disabled]::-webkit-input-placeholder, .checkbox input[disabled]:hover::-webkit-input-placeholder, .menu-checkbox input[disabled]:hover::-webkit-input-placeholder, .radio input[disabled]:hover::-webkit-input-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .checkbox input[disabled]:-moz-placeholder, .menu-checkbox input[disabled]:-moz-placeholder, .radio input[disabled]:-moz-placeholder, .checkbox input[disabled]:hover:-moz-placeholder, .menu-checkbox input[disabled]:hover:-moz-placeholder, .radio input[disabled]:hover:-moz-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .checkbox input[disabled]:-ms-input-placeholder, .menu-checkbox input[disabled]:-ms-input-placeholder, .radio input[disabled]:-ms-input-placeholder, .checkbox input[disabled]:hover:-ms-input-placeholder, .menu-checkbox input[disabled]:hover:-ms-input-placeholder, .radio input[disabled]:hover:-ms-input-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n    .checkbox input:after, .menu-checkbox input:after, .radio input:after {\n      border: 1px solid white;\n      border-right: 0;\n      border-top: 0;\n      content: \" \";\n      display: block;\n      height: 7px;\n      pointer-events: none;\n      position: absolute;\n      transform: rotate(-45deg);\n      width: 7px;\n      height: 4px;\n      left: 3px;\n      opacity: 0;\n      position: absolute;\n      top: 3px;\n      transform: rotate(-45deg) scale(1); }\n    .checkbox input:checked, .menu-checkbox input:checked, .radio input:checked {\n      background: #1fc8db;\n      border-color: #1fc8db;\n      box-shadow: none; }\n      .checkbox input:checked:after, .menu-checkbox input:checked:after, .radio input:checked:after {\n        opacity: 1; }\n  .checkbox:hover, .menu-checkbox:hover, .radio:hover {\n    color: #222324; }\n    .checkbox:hover input, .menu-checkbox:hover input, .radio:hover input {\n      border-color: #aeb1b5; }\n      .checkbox:hover input:checked, .menu-checkbox:hover input:checked, .radio:hover input:checked {\n        border-color: #1fc8db; }\n  .is-disabled.checkbox, .is-disabled.menu-checkbox, .is-disabled.radio, .is-disabled.checkbox:hover, .is-disabled.menu-checkbox:hover, .is-disabled.radio:hover {\n    color: #aeb1b5; }\n\n.radio + .radio {\n  margin-left: 10px; }\n\n.radio input {\n  border-radius: 8px; }\n  .radio input:after {\n    background: white;\n    border: 0;\n    border-radius: 2px;\n    left: 4px;\n    top: 4px;\n    transform: none;\n    width: 4px; }\n\n.select {\n  display: inline-block;\n  height: 32px;\n  position: relative;\n  vertical-align: top; }\n  .select select {\n    -moz-appearance: none;\n    -webkit-appearance: none;\n    background: white;\n    border: 1px solid #d3d6db;\n    border-radius: 3px;\n    color: #222324;\n    display: inline-block;\n    font-size: 14px;\n    height: 32px;\n    line-height: 24px;\n    padding: 3px 8px;\n    position: relative;\n    vertical-align: top;\n    cursor: pointer;\n    display: block;\n    outline: none;\n    padding-right: 36px; }\n    .select select:hover {\n      border-color: #aeb1b5; }\n    .select select:active, .select select:focus {\n      border-color: #1fc8db;\n      outline: none; }\n    .select select[disabled], .select select[disabled]:hover {\n      background: #f5f7fa;\n      border-color: #d3d6db; }\n      .select select[disabled]::-moz-placeholder, .select select[disabled]:hover::-moz-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .select select[disabled]::-webkit-input-placeholder, .select select[disabled]:hover::-webkit-input-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .select select[disabled]:-moz-placeholder, .select select[disabled]:hover:-moz-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .select select[disabled]:-ms-input-placeholder, .select select[disabled]:hover:-ms-input-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n    .select select:hover {\n      border-color: #aeb1b5; }\n    .select select::ms-expand {\n      display: none; }\n  .select:after {\n    border: 1px solid #1fc8db;\n    border-right: 0;\n    border-top: 0;\n    content: \" \";\n    display: block;\n    height: 7px;\n    pointer-events: none;\n    position: absolute;\n    transform: rotate(-45deg);\n    width: 7px;\n    margin-top: -6px;\n    right: 16px;\n    top: 50%; }\n  .select:hover:after {\n    border-color: #222324; }\n\n.control {\n  position: relative;\n  text-align: left; }\n  .control.is-loading:after {\n    position: absolute !important;\n    right: 8px;\n    top: 8px; }\n  .control:not(:last-child) {\n    margin-bottom: 10px; }\n  .control.is-withicon .fa {\n    display: inline-block;\n    font-size: 14px;\n    height: 20px;\n    line-height: 20px;\n    text-align: center;\n    vertical-align: top;\n    width: 20px;\n    color: #aeb1b5;\n    left: 6px;\n    pointer-events: none;\n    position: absolute;\n    top: 6px;\n    z-index: 1; }\n  .control.is-withicon .input, .control.is-withicon .textarea {\n    padding-left: 32px; }\n    .control.is-withicon .input:focus + .fa, .control.is-withicon .textarea:focus + .fa {\n      color: #1fc8db; }\n  .control.is-horizontal {\n    display: flex; }\n    .control.is-horizontal > .button:not(:last-child),\n    .control.is-horizontal > .input:not(:last-child),\n    .control.is-horizontal > .textarea:not(:last-child),\n    .control.is-horizontal > .select:not(:last-child) {\n      margin-right: 10px; }\n    .control.is-horizontal > .input, .control.is-horizontal > .textarea {\n      flex: 1; }\n  .control.is-grouped {\n    display: flex; }\n    .control.is-grouped .input, .control.is-grouped .textarea,\n    .control.is-grouped .button,\n    .control.is-grouped .select {\n      border-radius: 0;\n      margin-right: -1px; }\n      .control.is-grouped .input:hover, .control.is-grouped .textarea:hover,\n      .control.is-grouped .button:hover,\n      .control.is-grouped .select:hover {\n        z-index: 2; }\n      .control.is-grouped .input:active, .control.is-grouped .textarea:active, .control.is-grouped .input:focus, .control.is-grouped .textarea:focus,\n      .control.is-grouped .button:active,\n      .control.is-grouped .button:focus,\n      .control.is-grouped .select:active,\n      .control.is-grouped .select:focus {\n        z-index: 3; }\n      .control.is-grouped .input:first-child, .control.is-grouped .textarea:first-child,\n      .control.is-grouped .button:first-child,\n      .control.is-grouped .select:first-child {\n        border-radius: 3px 0 0 3px; }\n        .control.is-grouped .input:first-child select, .control.is-grouped .textarea:first-child select,\n        .control.is-grouped .button:first-child select,\n        .control.is-grouped .select:first-child select {\n          border-radius: 3px 0 0 3px; }\n      .control.is-grouped .input:last-child, .control.is-grouped .textarea:last-child,\n      .control.is-grouped .button:last-child,\n      .control.is-grouped .select:last-child {\n        border-radius: 0 3px 3px 0; }\n    .control.is-grouped.is-centered {\n      justify-content: center; }\n\n.button {\n  -moz-appearance: none;\n  -webkit-appearance: none;\n  background: white;\n  border: 1px solid #d3d6db;\n  border-radius: 3px;\n  color: #222324;\n  display: inline-block;\n  font-size: 14px;\n  height: 32px;\n  line-height: 24px;\n  padding: 3px 8px;\n  position: relative;\n  vertical-align: top;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  padding: 3px 10px;\n  text-align: center;\n  white-space: nowrap; }\n  .button:hover {\n    border-color: #aeb1b5; }\n  .button:active, .button:focus {\n    border-color: #1fc8db;\n    outline: none; }\n  .button[disabled], .button[disabled]:hover {\n    background: #f5f7fa;\n    border-color: #d3d6db; }\n    .button[disabled]::-moz-placeholder, .button[disabled]:hover::-moz-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .button[disabled]::-webkit-input-placeholder, .button[disabled]:hover::-webkit-input-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .button[disabled]:-moz-placeholder, .button[disabled]:hover:-moz-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .button[disabled]:-ms-input-placeholder, .button[disabled]:hover:-ms-input-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n  .button strong {\n    color: inherit; }\n  .button small {\n    display: block;\n    font-size: 11px;\n    line-height: 1;\n    margin-top: 5px; }\n  .button .fa {\n    line-height: 24px;\n    margin: 0 -2px;\n    width: 24px; }\n  .button:hover {\n    color: #222324; }\n  .button:active {\n    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2); }\n  .button.is-dark {\n    background: #222324;\n    border-color: transparent;\n    color: white; }\n    .button.is-dark:hover, .button.is-dark:focus {\n      background: #090a0a;\n      border-color: transparent;\n      color: white; }\n    .button.is-dark:active {\n      border-color: transparent; }\n    .button.is-dark.is-outlined {\n      background: transparent;\n      border-color: #222324;\n      color: #222324; }\n      .button.is-dark.is-outlined:hover, .button.is-dark.is-outlined:focus {\n        border-color: #090a0a;\n        color: #090a0a; }\n    .button.is-dark.is-inverted {\n      background: white;\n      color: #222324; }\n      .button.is-dark.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-dark.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-dark.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-dark.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-primary {\n    background: #1fc8db;\n    border-color: transparent;\n    color: white; }\n    .button.is-primary:hover, .button.is-primary:focus {\n      background: #199fae;\n      border-color: transparent;\n      color: white; }\n    .button.is-primary:active {\n      border-color: transparent; }\n    .button.is-primary.is-outlined {\n      background: transparent;\n      border-color: #1fc8db;\n      color: #1fc8db; }\n      .button.is-primary.is-outlined:hover, .button.is-primary.is-outlined:focus {\n        border-color: #199fae;\n        color: #199fae; }\n    .button.is-primary.is-inverted {\n      background: white;\n      color: #1fc8db; }\n      .button.is-primary.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-primary.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-primary.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-primary.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-info {\n    background: #42afe3;\n    border-color: transparent;\n    color: white; }\n    .button.is-info:hover, .button.is-info:focus {\n      background: #1f99d3;\n      border-color: transparent;\n      color: white; }\n    .button.is-info:active {\n      border-color: transparent; }\n    .button.is-info.is-outlined {\n      background: transparent;\n      border-color: #42afe3;\n      color: #42afe3; }\n      .button.is-info.is-outlined:hover, .button.is-info.is-outlined:focus {\n        border-color: #1f99d3;\n        color: #1f99d3; }\n    .button.is-info.is-inverted {\n      background: white;\n      color: #42afe3; }\n      .button.is-info.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-info.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-info.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-info.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-success {\n    background: #97cd76;\n    border-color: transparent;\n    color: white; }\n    .button.is-success:hover, .button.is-success:focus {\n      background: #7bbf51;\n      border-color: transparent;\n      color: white; }\n    .button.is-success:active {\n      border-color: transparent; }\n    .button.is-success.is-outlined {\n      background: transparent;\n      border-color: #97cd76;\n      color: #97cd76; }\n      .button.is-success.is-outlined:hover, .button.is-success.is-outlined:focus {\n        border-color: #7bbf51;\n        color: #7bbf51; }\n    .button.is-success.is-inverted {\n      background: white;\n      color: #97cd76; }\n      .button.is-success.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-success.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-success.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-success.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-warning {\n    background: #fce473;\n    border-color: transparent;\n    color: rgba(0, 0, 0, 0.5); }\n    .button.is-warning:hover, .button.is-warning:focus {\n      background: #fbda41;\n      border-color: transparent;\n      color: rgba(0, 0, 0, 0.5); }\n    .button.is-warning:active {\n      border-color: transparent; }\n    .button.is-warning.is-outlined {\n      background: transparent;\n      border-color: #fce473;\n      color: #fce473; }\n      .button.is-warning.is-outlined:hover, .button.is-warning.is-outlined:focus {\n        border-color: #fbda41;\n        color: #fbda41; }\n    .button.is-warning.is-inverted {\n      background: rgba(0, 0, 0, 0.5);\n      color: #fce473; }\n      .button.is-warning.is-inverted:hover {\n        background: rgba(0, 0, 0, 0.5); }\n      .button.is-warning.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: rgba(0, 0, 0, 0.5);\n        color: rgba(0, 0, 0, 0.5); }\n        .button.is-warning.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-warning.is-loading:after {\n      border-color: transparent transparent rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.5) !important; }\n  .button.is-danger {\n    background: #ed6c63;\n    border-color: transparent;\n    color: white; }\n    .button.is-danger:hover, .button.is-danger:focus {\n      background: #e84135;\n      border-color: transparent;\n      color: white; }\n    .button.is-danger:active {\n      border-color: transparent; }\n    .button.is-danger.is-outlined {\n      background: transparent;\n      border-color: #ed6c63;\n      color: #ed6c63; }\n      .button.is-danger.is-outlined:hover, .button.is-danger.is-outlined:focus {\n        border-color: #e84135;\n        color: #e84135; }\n    .button.is-danger.is-inverted {\n      background: white;\n      color: #ed6c63; }\n      .button.is-danger.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-danger.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-danger.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-danger.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-small {\n    border-radius: 2px;\n    font-size: 11px;\n    height: 24px;\n    line-height: 16px;\n    padding: 3px 6px; }\n  .button.is-medium {\n    font-size: 18px;\n    height: 40px;\n    padding: 7px 14px; }\n  .button.is-large {\n    font-size: 22px;\n    height: 48px;\n    padding: 11px 20px; }\n  .button.is-fullwidth {\n    display: block;\n    width: 100%; }\n  .button.is-flexible {\n    height: auto; }\n  .button.is-loading {\n    color: transparent;\n    pointer-events: none; }\n    .button.is-loading:after {\n      left: 50%;\n      margin-left: -8px;\n      margin-top: -8px;\n      position: absolute;\n      top: 50%;\n      position: absolute !important; }\n  .button.is-disabled, .button[disabled] {\n    opacity: 0.5;\n    pointer-events: none; }\n  @media screen and (min-width: 769px) {\n    .button small {\n      color: #69707a;\n      left: 0;\n      margin-top: 10px;\n      position: absolute;\n      top: 100%;\n      width: 100%; } }\n\n.title,\n.subtitle {\n  font-weight: 300; }\n  .title:not(:last-child),\n  .subtitle:not(:last-child) {\n    margin-bottom: 20px; }\n\n.title {\n  color: #222324;\n  font-size: 28px;\n  line-height: 1; }\n  .title strong {\n    color: inherit; }\n  .title code {\n    display: inline-block;\n    font-size: 28px; }\n  .title + .subtitle {\n    margin-top: -10px; }\n  .title + .highlight {\n    margin-top: -10px; }\n  .title.is-normal {\n    font-weight: 400; }\n    .title.is-normal strong {\n      font-weight: 700; }\n  .title.is-1 {\n    font-size: 48px; }\n    .title.is-1 code {\n      font-size: 40px; }\n  .title.is-2 {\n    font-size: 40px; }\n    .title.is-2 code {\n      font-size: 28px; }\n  .title.is-3 {\n    font-size: 28px; }\n    .title.is-3 code {\n      font-size: 24px; }\n  .title.is-4 {\n    font-size: 24px; }\n    .title.is-4 code {\n      font-size: 18px; }\n  .title.is-5 {\n    font-size: 18px; }\n    .title.is-5 code {\n      font-size: 14px; }\n  .title.is-6 {\n    font-size: 14px; }\n    .title.is-6 code {\n      font-size: 14px; }\n  @media screen and (min-width: 769px) {\n    .title + .subtitle {\n      margin-top: -15px; } }\n\n.subtitle {\n  font-size: 18px;\n  line-height: 1.125; }\n  .subtitle + .title {\n    margin-top: -20px; }\n  .subtitle strong {\n    color: #222324;\n    font-weight: 400; }\n  .subtitle code {\n    border-radius: 3px;\n    display: inline-block;\n    font-size: 14px;\n    padding: 2px 3px;\n    vertical-align: top; }\n  .subtitle + .text {\n    margin-top: 20px; }\n  .subtitle.is-normal {\n    font-weight: 400; }\n    .subtitle.is-normal strong {\n      font-weight: 700; }\n  .subtitle.is-1 {\n    font-size: 48px; }\n    .subtitle.is-1 code {\n      font-size: 40px; }\n  .subtitle.is-2 {\n    font-size: 40px; }\n    .subtitle.is-2 code {\n      font-size: 28px; }\n  .subtitle.is-3 {\n    font-size: 28px; }\n    .subtitle.is-3 code {\n      font-size: 24px; }\n  .subtitle.is-4 {\n    font-size: 24px; }\n    .subtitle.is-4 code {\n      font-size: 18px; }\n  .subtitle.is-5 {\n    font-size: 18px; }\n    .subtitle.is-5 code {\n      font-size: 14px; }\n  .subtitle.is-6 {\n    font-size: 14px; }\n    .subtitle.is-6 code {\n      font-size: 14px; }\n\n.message-body {\n  border: 1px solid #d3d6db;\n  border-radius: 3px;\n  padding: 12px 15px; }\n  .message-body strong {\n    color: inherit; }\n\n.message-header {\n  background: #69707a;\n  border-radius: 3px 3px 0 0;\n  color: white;\n  font-size: 10px;\n  font-weight: bold;\n  letter-spacing: 1px;\n  padding: 3px 8px;\n  text-transform: uppercase; }\n  .message-header + .message-body {\n    border-radius: 0 0 3px 3px;\n    border-top: none; }\n\n.message {\n  background: #f5f7fa;\n  border-radius: 3px; }\n  .message:not(:last-child) {\n    margin-bottom: 20px; }\n  .message.is-dark {\n    background: whitesmoke; }\n    .message.is-dark .message-header {\n      background: #222324;\n      color: white; }\n    .message.is-dark .message-body {\n      border-color: #222324;\n      color: gray; }\n  .message.is-primary {\n    background: #edfbfc; }\n    .message.is-primary .message-header {\n      background: #1fc8db;\n      color: white; }\n    .message.is-primary .message-body {\n      border-color: #1fc8db;\n      color: gray; }\n  .message.is-info {\n    background: #edf7fc; }\n    .message.is-info .message-header {\n      background: #42afe3;\n      color: white; }\n    .message.is-info .message-body {\n      border-color: #42afe3;\n      color: gray; }\n  .message.is-success {\n    background: #f4faf0; }\n    .message.is-success .message-header {\n      background: #97cd76;\n      color: white; }\n    .message.is-success .message-body {\n      border-color: #97cd76;\n      color: gray; }\n  .message.is-warning {\n    background: #fffbeb; }\n    .message.is-warning .message-header {\n      background: #fce473;\n      color: rgba(0, 0, 0, 0.5); }\n    .message.is-warning .message-body {\n      border-color: #fce473;\n      color: #666666; }\n  .message.is-danger {\n    background: #fdeeed; }\n    .message.is-danger .message-header {\n      background: #ed6c63;\n      color: white; }\n    .message.is-danger .message-body {\n      border-color: #ed6c63;\n      color: gray; }\n\n.notification {\n  background: #f5f7fa;\n  border-radius: 3px;\n  padding: 16px 20px;\n  position: relative; }\n  .notification:after {\n    clear: both;\n    content: \" \";\n    display: table; }\n  .notification:not(:last-child) {\n    margin-bottom: 20px; }\n  .notification .title {\n    color: inherit; }\n  .notification.is-dark {\n    background: #222324;\n    color: white; }\n  .notification.is-primary {\n    background: #1fc8db;\n    color: white; }\n  .notification.is-info {\n    background: #42afe3;\n    color: white; }\n  .notification.is-success {\n    background: #97cd76;\n    color: white; }\n  .notification.is-warning {\n    background: #fce473;\n    color: rgba(0, 0, 0, 0.5); }\n  .notification.is-danger {\n    background: #ed6c63;\n    color: white; }\n  .notification .delete {\n    border-radius: 0 3px;\n    float: right;\n    margin: -16px -20px 0 20px; }\n\n.delete {\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -moz-appearance: none;\n  -webkit-appearance: none;\n  background: rgba(0, 0, 0, 0.2);\n  border: none;\n  border-radius: 290486px;\n  cursor: pointer;\n  display: inline-block;\n  height: 24px;\n  position: relative;\n  vertical-align: top;\n  width: 24px; }\n  .delete:before, .delete:after {\n    background: white;\n    content: \"\";\n    display: block;\n    height: 2px;\n    left: 6px;\n    position: absolute;\n    top: 11px;\n    width: 12px; }\n  .delete:before {\n    transform: rotate(45deg); }\n  .delete:after {\n    transform: rotate(-45deg); }\n  .delete:hover {\n    background: rgba(0, 0, 0, 0.5); }\n  .delete.is-small, .tag:not(.is-large) .delete {\n    height: 16px;\n    width: 16px; }\n    .delete.is-small:before, .tag:not(.is-large) .delete:before, .delete.is-small:after, .tag:not(.is-large) .delete:after {\n      left: 4px;\n      top: 7px;\n      width: 8px; }\n\n.icon {\n  display: inline-block;\n  font-size: 21px;\n  height: 24px;\n  line-height: 24px;\n  text-align: center;\n  vertical-align: top;\n  width: 24px; }\n  .icon .fa {\n    font-size: inherit;\n    line-height: inherit; }\n  .icon.is-small {\n    display: inline-block;\n    font-size: 14px;\n    height: 20px;\n    line-height: 20px;\n    text-align: center;\n    vertical-align: top;\n    width: 20px; }\n  .icon.is-medium {\n    display: inline-block;\n    font-size: 28px;\n    height: 32px;\n    line-height: 32px;\n    text-align: center;\n    vertical-align: top;\n    width: 32px; }\n  .icon.is-large {\n    display: inline-block;\n    font-size: 42px;\n    height: 48px;\n    line-height: 48px;\n    text-align: center;\n    vertical-align: top;\n    width: 48px; }\n\n.hamburger, .header-toggle {\n  cursor: pointer;\n  display: block;\n  height: 50px;\n  position: relative;\n  width: 50px; }\n  .hamburger span, .header-toggle span {\n    background: #69707a;\n    display: block;\n    height: 1px;\n    left: 50%;\n    margin-left: -7px;\n    position: absolute;\n    top: 50%;\n    transition: none 86ms ease-out;\n    transition-property: background, left, opacity, transform;\n    width: 15px; }\n    .hamburger span:nth-child(1), .header-toggle span:nth-child(1) {\n      margin-top: -6px; }\n    .hamburger span:nth-child(2), .header-toggle span:nth-child(2) {\n      margin-top: -1px; }\n    .hamburger span:nth-child(3), .header-toggle span:nth-child(3) {\n      margin-top: 4px; }\n  .hamburger:hover, .header-toggle:hover {\n    background: #f5f7fa; }\n  .hamburger.is-active span, .is-active.header-toggle span {\n    background: #1fc8db; }\n    .hamburger.is-active span:nth-child(1), .is-active.header-toggle span:nth-child(1) {\n      margin-left: -5px;\n      transform: rotate(45deg);\n      transform-origin: left top; }\n    .hamburger.is-active span:nth-child(2), .is-active.header-toggle span:nth-child(2) {\n      opacity: 0; }\n    .hamburger.is-active span:nth-child(3), .is-active.header-toggle span:nth-child(3) {\n      margin-left: -5px;\n      transform: rotate(-45deg);\n      transform-origin: left bottom; }\n  @media screen and (min-width: 769px) {\n    .hamburger, .header-toggle {\n      height: 50px;\n      width: 50px; } }\n\n.heading {\n  display: block;\n  font-size: 11px;\n  letter-spacing: 1px;\n  margin-bottom: 5px;\n  text-transform: uppercase; }\n\n.highlight {\n  font-size: 12px;\n  font-weight: normal;\n  max-width: 100%;\n  overflow: hidden;\n  padding: 0; }\n  .highlight:not(:last-child) {\n    margin-bottom: 20px; }\n  .highlight pre {\n    overflow: auto;\n    max-width: 100%; }\n\n.image {\n  display: block;\n  position: relative;\n  vertical-align: top; }\n  .image img {\n    bottom: 0;\n    left: 0;\n    position: absolute;\n    right: 0;\n    top: 0;\n    display: block;\n    width: 100%; }\n  .image.is-3x2 {\n    padding-top: 66.6666%; }\n\n.loader, .control.is-loading:after, .button.is-loading:after {\n  animation: spin-around 500ms infinite linear;\n  border: 2px solid #d3d6db;\n  border-radius: 290486px;\n  border-right-color: transparent;\n  border-top-color: transparent;\n  content: \"\";\n  display: block;\n  height: 16px;\n  position: relative;\n  width: 16px; }\n\n.number {\n  background: #f5f7fa;\n  border-radius: 290486px;\n  display: inline-block;\n  font-size: 18px;\n  vertical-align: top; }\n\n.tag {\n  background: #f5f7fa;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);\n  color: #69707a;\n  display: inline-block;\n  font-size: 12px;\n  height: 24px;\n  line-height: 16px;\n  padding: 4px 10px;\n  vertical-align: top;\n  white-space: nowrap; }\n  .tag.is-dark {\n    background: #69707a;\n    color: white; }\n  .tag.is-rounded {\n    border-radius: 290486px; }\n  .tag.is-medium {\n    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);\n    font-size: 14px;\n    height: 32px;\n    padding: 7px 14px 9px; }\n  .tag:not(.is-large) .delete {\n    margin-left: 4px;\n    margin-right: -6px; }\n  .tag.is-large {\n    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);\n    font-size: 18px;\n    height: 40px;\n    line-height: 24px;\n    padding: 7px 18px 9px; }\n    .tag.is-large .delete {\n      margin-left: 4px;\n      margin-right: -8px; }\n  .tag.is-dark {\n    background: #222324;\n    color: white; }\n  .tag.is-primary {\n    background: #1fc8db;\n    color: white; }\n  .tag.is-info {\n    background: #42afe3;\n    color: white; }\n  .tag.is-success {\n    background: #97cd76;\n    color: white; }\n  .tag.is-warning {\n    background: #fce473;\n    color: rgba(0, 0, 0, 0.5); }\n  .tag.is-danger {\n    background: #ed6c63;\n    color: white; }\n\n.column {\n  flex: 1;\n  padding: 10px; }\n  .columns.is-mobile > .column.is-half {\n    flex: none;\n    width: 50%; }\n  .columns.is-mobile > .column.is-third {\n    flex: none;\n    width: 33.3333%; }\n  .columns.is-mobile > .column.is-quarter {\n    flex: none;\n    width: 25%; }\n  .columns.is-mobile > .column.is-1-mobile {\n    flex: none;\n    width: 8.33333%; }\n  .columns.is-mobile > .column.is-2-mobile {\n    flex: none;\n    width: 16.66667%; }\n  .columns.is-mobile > .column.is-3-mobile {\n    flex: none;\n    width: 25%; }\n  .columns.is-mobile > .column.is-4-mobile {\n    flex: none;\n    width: 33.33333%; }\n  .columns.is-mobile > .column.is-5-mobile {\n    flex: none;\n    width: 41.66667%; }\n  .columns.is-mobile > .column.is-6-mobile {\n    flex: none;\n    width: 50%; }\n  .columns.is-mobile > .column.is-7-mobile {\n    flex: none;\n    width: 58.33333%; }\n  .columns.is-mobile > .column.is-8-mobile {\n    flex: none;\n    width: 66.66667%; }\n  .columns.is-mobile > .column.is-9-mobile {\n    flex: none;\n    width: 75%; }\n  .columns.is-mobile > .column.is-10-mobile {\n    flex: none;\n    width: 83.33333%; }\n  .columns.is-mobile > .column.is-11-mobile {\n    flex: none;\n    width: 91.66667%; }\n  @media screen and (max-width: 768px) {\n    .column.is-half-mobile {\n      flex: none;\n      width: 50%; }\n    .column.is-third-mobile {\n      flex: none;\n      width: 33.3333%; }\n    .column.is-quarter-mobile {\n      flex: none;\n      width: 25%; }\n    .column.is-1-mobile {\n      flex: none;\n      width: 8.33333%; }\n    .column.is-2-mobile {\n      flex: none;\n      width: 16.66667%; }\n    .column.is-3-mobile {\n      flex: none;\n      width: 25%; }\n    .column.is-4-mobile {\n      flex: none;\n      width: 33.33333%; }\n    .column.is-5-mobile {\n      flex: none;\n      width: 41.66667%; }\n    .column.is-6-mobile {\n      flex: none;\n      width: 50%; }\n    .column.is-7-mobile {\n      flex: none;\n      width: 58.33333%; }\n    .column.is-8-mobile {\n      flex: none;\n      width: 66.66667%; }\n    .column.is-9-mobile {\n      flex: none;\n      width: 75%; }\n    .column.is-10-mobile {\n      flex: none;\n      width: 83.33333%; }\n    .column.is-11-mobile {\n      flex: none;\n      width: 91.66667%; } }\n  @media screen and (min-width: 769px) {\n    .column.is-half, .column.is-half-tablet {\n      flex: none;\n      width: 50%; }\n    .column.is-third, .column.is-third-tablet {\n      flex: none;\n      width: 33.3333%; }\n    .column.is-quarter, .column.is-quarter-tablet {\n      flex: none;\n      width: 25%; }\n    .column.is-1, .column.is-1-tablet {\n      flex: none;\n      width: 8.33333%; }\n    .column.is-2, .column.is-2-tablet {\n      flex: none;\n      width: 16.66667%; }\n    .column.is-3, .column.is-3-tablet {\n      flex: none;\n      width: 25%; }\n    .column.is-4, .column.is-4-tablet {\n      flex: none;\n      width: 33.33333%; }\n    .column.is-5, .column.is-5-tablet {\n      flex: none;\n      width: 41.66667%; }\n    .column.is-6, .column.is-6-tablet {\n      flex: none;\n      width: 50%; }\n    .column.is-7, .column.is-7-tablet {\n      flex: none;\n      width: 58.33333%; }\n    .column.is-8, .column.is-8-tablet {\n      flex: none;\n      width: 66.66667%; }\n    .column.is-9, .column.is-9-tablet {\n      flex: none;\n      width: 75%; }\n    .column.is-10, .column.is-10-tablet {\n      flex: none;\n      width: 83.33333%; }\n    .column.is-11, .column.is-11-tablet {\n      flex: none;\n      width: 91.66667%; } }\n  @media screen and (min-width: 980px) {\n    .column.is-half-desktop {\n      flex: none;\n      width: 50%; }\n    .column.is-third-desktop {\n      flex: none;\n      width: 33.3333%; }\n    .column.is-quarter-desktop {\n      flex: none;\n      width: 25%; }\n    .column.is-1-desktop {\n      flex: none;\n      width: 8.33333%; }\n    .column.is-2-desktop {\n      flex: none;\n      width: 16.66667%; }\n    .column.is-3-desktop {\n      flex: none;\n      width: 25%; }\n    .column.is-4-desktop {\n      flex: none;\n      width: 33.33333%; }\n    .column.is-5-desktop {\n      flex: none;\n      width: 41.66667%; }\n    .column.is-6-desktop {\n      flex: none;\n      width: 50%; }\n    .column.is-7-desktop {\n      flex: none;\n      width: 58.33333%; }\n    .column.is-8-desktop {\n      flex: none;\n      width: 66.66667%; }\n    .column.is-9-desktop {\n      flex: none;\n      width: 75%; }\n    .column.is-10-desktop {\n      flex: none;\n      width: 83.33333%; }\n    .column.is-11-desktop {\n      flex: none;\n      width: 91.66667%; } }\n\n.columns {\n  margin-left: -10px;\n  margin-right: -10px;\n  margin-top: -10px; }\n  .columns:last-child {\n    margin-bottom: -10px; }\n  .columns:not(:last-child) {\n    margin-bottom: 10px; }\n  .columns.is-mobile {\n    display: flex; }\n  @media screen and (min-width: 769px) {\n    .columns:not(.is-desktop) {\n      display: flex; } }\n  @media screen and (min-width: 980px) {\n    .columns.is-desktop {\n      display: flex; } }\n  .columns.is-gapless:not(:last-child) {\n    margin: 0 0 20px; }\n  .columns.is-gapless > .column {\n    margin: 0;\n    padding: 0; }\n  .columns.is-multiline {\n    flex-wrap: wrap; }\n  .columns.is-vcentered {\n    align-items: center; }\n  @media screen and (min-width: 769px) {\n    .columns.is-grid {\n      flex-wrap: wrap; }\n      .columns.is-grid > .column {\n        flex-basis: 33.3333%;\n        max-width: 33.3333%;\n        padding: 10px;\n        width: 33.3333%; }\n        .columns.is-grid > .column + .column {\n          margin-left: 0; } }\n\n.navbar-item .title,\n.navbar-item .subtitle {\n  margin-bottom: 0; }\n\n@media screen and (max-width: 768px) {\n  .navbar-item:not(:last-child) {\n    margin-bottom: 10px; } }\n\n.navbar:not(:last-child) {\n  margin-bottom: 20px; }\n\n.navbar code {\n  border-radius: 3px; }\n\n.navbar img {\n  display: inline-block;\n  vertical-align: top; }\n\n@media screen and (min-width: 769px) {\n  .navbar {\n    align-items: center;\n    display: flex;\n    justify-content: space-between; }\n    .navbar > .navbar-item:not(.is-narrow) {\n      flex: 1; } }\n\n.navbar-left .navbar-item.is-flexible,\n.navbar-right .navbar-item.is-flexible {\n  flex: 1; }\n\n.navbar-left .navbar-item:not(:last-child),\n.navbar-right .navbar-item:not(:last-child) {\n  margin-right: 10px; }\n\n@media screen and (max-width: 768px) {\n  .navbar-left + .navbar-right {\n    margin-top: 20px; } }\n\n@media screen and (min-width: 769px) {\n  .navbar-left {\n    align-items: center;\n    display: flex; } }\n\n@media screen and (min-width: 769px) {\n  .navbar-right {\n    align-items: center;\n    display: flex;\n    justify-content: flex-end; } }\n\n.card-image {\n  display: block;\n  position: relative; }\n  .card-image img {\n    display: block; }\n  .card-image.is-square img, .card-image.is-4x3 img, .card-image.is-3x2 img {\n    bottom: 0;\n    left: 0;\n    position: absolute;\n    right: 0;\n    top: 0;\n    height: 100%;\n    width: 100%; }\n  .card-image.is-square {\n    padding-top: 100%; }\n  .card-image.is-4x3 {\n    padding-top: 75%; }\n  .card-image.is-3x2 {\n    padding-top: 66.6666%; }\n\n.card-content {\n  padding: 20px; }\n  .card-content .title + .subtitle {\n    margin-top: -20px; }\n\n.card-footer {\n  background: #f5f7fa;\n  display: block;\n  padding: 10px; }\n\n.card {\n  background: white;\n  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);\n  max-width: 100%;\n  position: relative;\n  width: 300px; }\n  .card .media:not(:last-child) {\n    margin-bottom: 10px; }\n  .card.is-rounded {\n    border-radius: 5px; }\n\n.table {\n  background: white;\n  color: #222324;\n  margin-bottom: 20px;\n  width: 100%; }\n  .table th,\n  .table td {\n    border: 1px solid #d3d6db;\n    border-width: 0 0 1px;\n    padding: 8px 10px;\n    vertical-align: top; }\n    .table th.table-link,\n    .table td.table-link {\n      padding: 0; }\n      .table th.table-link > a,\n      .table td.table-link > a {\n        display: block;\n        padding: 8px 10px; }\n        .table th.table-link > a:hover,\n        .table td.table-link > a:hover {\n          background: #1fc8db;\n          color: white; }\n    .table th.table-icon,\n    .table td.table-icon {\n      padding: 5px;\n      text-align: center;\n      white-space: nowrap;\n      width: 1%; }\n      .table th.table-icon .fa,\n      .table td.table-icon .fa {\n        display: inline-block;\n        font-size: 21px;\n        height: 24px;\n        line-height: 24px;\n        text-align: center;\n        vertical-align: top;\n        width: 24px; }\n      .table th.table-icon.table-link,\n      .table td.table-icon.table-link {\n        padding: 0; }\n        .table th.table-icon.table-link > a,\n        .table td.table-icon.table-link > a {\n          padding: 5px; }\n  .table th {\n    color: #222324;\n    text-align: left; }\n  .table tr:hover {\n    background: rgba(245, 247, 250, 0.5);\n    color: #222324; }\n  .table tr:last-child td {\n    border-bottom-width: 0; }\n  .table thead th,\n  .table thead td {\n    border-width: 0 0 2px;\n    color: #aeb1b5; }\n  .table tfoot th,\n  .table tfoot td {\n    border-width: 2px 0 0;\n    color: #aeb1b5; }\n  .table.is-bordered th,\n  .table.is-bordered td {\n    border-width: 1px; }\n  .table.is-bordered tr:last-child td {\n    border-bottom-width: 1px; }\n  .table.is-narrow th,\n  .table.is-narrow td {\n    padding: 5px 10px; }\n    .table.is-narrow th.table-link,\n    .table.is-narrow td.table-link {\n      padding: 0; }\n      .table.is-narrow th.table-link > a,\n      .table.is-narrow td.table-link > a {\n        padding: 5px 10px; }\n    .table.is-narrow th.table-icon,\n    .table.is-narrow td.table-icon {\n      padding: 2px; }\n      .table.is-narrow th.table-icon.table-link,\n      .table.is-narrow td.table-icon.table-link {\n        padding: 0; }\n        .table.is-narrow th.table-icon.table-link > a,\n        .table.is-narrow td.table-icon.table-link > a {\n          padding: 2px; }\n  .table.is-striped tbody tr:nth-child(2n) {\n    background: rgba(245, 247, 250, 0.5); }\n    .table.is-striped tbody tr:nth-child(2n):hover {\n      background: #f5f7fa; }\n\n.tabs {\n  line-height: 24px;\n  overflow: hidden;\n  overflow-x: auto;\n  white-space: nowrap; }\n  .tabs:not(:last-child) {\n    margin-bottom: 20px; }\n  .tabs .fa {\n    font-size: 14px;\n    line-height: 20px;\n    margin: 2px -2px;\n    width: 20px; }\n  .tabs a {\n    border-bottom: 1px solid #d3d6db;\n    color: #69707a;\n    display: block;\n    margin-bottom: -1px;\n    padding: 5px 0;\n    vertical-align: top; }\n    .tabs a:hover {\n      border-bottom-color: #222324;\n      color: #222324; }\n  .tabs li {\n    display: block;\n    vertical-align: top; }\n    .tabs li + li {\n      margin-left: 20px; }\n    .tabs li.is-active a {\n      border-bottom-color: #1fc8db;\n      color: #1fc8db; }\n  .tabs ul {\n    border-bottom: 1px solid #d3d6db;\n    display: flex; }\n  .tabs.is-centered a {\n    padding: 5px 10px; }\n  .tabs.is-centered li + li {\n    margin-left: 0; }\n  .tabs.is-centered ul {\n    justify-content: center;\n    text-align: center; }\n  .tabs.is-right ul {\n    justify-content: flex-end; }\n  .tabs.is-boxed a {\n    border: 1px solid transparent;\n    border-radius: 3px 3px 0 0;\n    padding: 5px 15px; }\n    .tabs.is-boxed a:hover {\n      background: #f5f7fa;\n      border-bottom-color: #d3d6db; }\n  .tabs.is-boxed li + li {\n    margin-left: 5px; }\n  .tabs.is-boxed li.is-active a {\n    background: white;\n    border-color: #d3d6db;\n    border-bottom-color: transparent; }\n  .tabs.is-boxed.is-centered li,\n  .tabs.is-boxed.is-centered li + li {\n    margin: 0 2px; }\n  .tabs.is-toggle a {\n    border: 1px solid #d3d6db;\n    margin-bottom: 0;\n    padding: 5px 10px;\n    position: relative; }\n    .tabs.is-toggle a:hover {\n      background: #f5f7fa;\n      border-color: #aeb1b5;\n      z-index: 2; }\n  .tabs.is-toggle li + li {\n    margin-left: -1px; }\n  .tabs.is-toggle li:first-child a {\n    border-radius: 3px 0 0 3px; }\n  .tabs.is-toggle li:last-child a {\n    border-radius: 0 3px 3px 0; }\n  .tabs.is-toggle li.is-active a {\n    background: #1fc8db;\n    border-color: #1fc8db;\n    color: white;\n    z-index: 1; }\n  .tabs.is-toggle ul {\n    border-bottom: none; }\n  @media screen and (min-width: 769px) {\n    .tabs.is-fullwidth li {\n      flex: 1; }\n      .tabs.is-fullwidth li + li {\n        margin-left: 0; }\n    .tabs.is-fullwidth ul {\n      justify-content: center;\n      text-align: center; } }\n\n.media-image.is-32 {\n  width: 32px; }\n\n.media-image.is-40 {\n  width: 40px; }\n\n@media screen and (max-width: 768px) {\n  .media-image {\n    margin-bottom: 10px; } }\n\n@media screen and (min-width: 769px) {\n  .media-image {\n    margin-right: 10px;\n    width: 60px; } }\n\n.media-number {\n  background: #f5f7fa;\n  border-radius: 290486px;\n  display: inline-block;\n  font-size: 18px;\n  height: 32px;\n  line-height: 24px;\n  min-width: 32px;\n  padding: 4px 8px;\n  text-align: center;\n  vertical-align: top; }\n  @media screen and (max-width: 768px) {\n    .media-number {\n      margin-bottom: 10px; } }\n  @media screen and (min-width: 769px) {\n    .media-number {\n      margin-right: 10px; } }\n\n@media screen and (max-width: 768px) {\n  .media-left {\n    margin-bottom: 20px; } }\n\n@media screen and (min-width: 769px) {\n  .media-left {\n    margin-right: 20px; } }\n\n@media screen and (max-width: 768px) {\n  .media-right {\n    margin-top: 20px; } }\n\n@media screen and (min-width: 769px) {\n  .media-right {\n    margin-left: 20px; } }\n\n.media-content {\n  flex: 1;\n  text-align: left; }\n  .media-content .textarea {\n    min-height: 60px; }\n\n.media {\n  align-items: flex-start;\n  text-align: left; }\n  .media .content:not(:last-child) {\n    margin-bottom: 10px; }\n  .media .media {\n    border-top: 1px solid rgba(211, 214, 219, 0.5);\n    display: flex;\n    padding-top: 10px; }\n    .media .media .media-image {\n      margin-bottom: 0;\n      margin-right: 10px;\n      width: 40px; }\n    .media .media .textarea {\n      border-radius: 2px;\n      font-size: 11px;\n      height: 24px;\n      line-height: 16px;\n      padding: 3px 6px; }\n    .media .media .button {\n      border-radius: 2px;\n      font-size: 11px;\n      height: 24px;\n      line-height: 16px;\n      padding: 3px 6px; }\n    .media .media .content:not(:last-child),\n    .media .media .control:not(:last-child) {\n      margin-bottom: 5px; }\n    .media .media .media {\n      font-size: 12px;\n      padding-top: 5px; }\n      .media .media .media + .media {\n        margin-top: 5px; }\n  .media + .media {\n    border-top: 1px solid rgba(211, 214, 219, 0.5);\n    margin-top: 10px;\n    padding-top: 10px; }\n  .media.is-large + .media {\n    margin-top: 20px;\n    padding-top: 20px; }\n  @media screen and (min-width: 769px) {\n    .media {\n      display: flex; }\n      .media.is-large .media-number {\n        margin-right: 20px; } }\n\n.menu-icon {\n  display: inline-block;\n  font-size: 14px;\n  height: 16px;\n  line-height: 16px;\n  text-align: center;\n  vertical-align: top;\n  width: 16px;\n  color: #aeb1b5;\n  float: left;\n  margin: 0 4px 0 -2px; }\n  .menu-icon .fa {\n    font-size: inherit;\n    line-height: inherit; }\n\n.menu-heading {\n  background: #f5f7fa;\n  border-bottom: 1px solid #d3d6db;\n  border-radius: 4px 4px 0 0;\n  color: #222324;\n  font-size: 18px;\n  font-weight: 300;\n  padding: 10px; }\n\n.menu-list a {\n  color: #69707a; }\n  .menu-list a:hover {\n    color: #1fc8db; }\n\n.menu-tabs {\n  display: flex;\n  font-size: 11px;\n  padding: 5px 10px 0;\n  justify-content: center; }\n  .menu-tabs:not(:last-child) {\n    border-bottom: 1px solid #d3d6db; }\n  .menu-tabs a {\n    border-bottom: 1px solid #d3d6db;\n    margin-bottom: -1px;\n    padding: 5px; }\n    .menu-tabs a.is-active {\n      border-bottom-color: #222324;\n      color: #222324; }\n\n.menu-block {\n  color: #222324;\n  display: block;\n  line-height: 16px;\n  padding: 10px; }\n  .menu-block:not(:last-child) {\n    border-bottom: 1px solid #d3d6db; }\n  .menu-block .checkbox, .menu-block .menu-checkbox {\n    border: 1px solid transparent;\n    border-radius: 3px;\n    display: block;\n    padding: 8px;\n    padding-left: 32px; }\n    .menu-block .checkbox input, .menu-block .menu-checkbox input {\n      left: 9px;\n      top: 9px; }\n    .menu-block .checkbox:hover, .menu-block .menu-checkbox:hover {\n      border-color: #1fc8db; }\n\na.menu-block:hover {\n  background: #f5f7fa; }\n\n.menu-checkbox {\n  display: block;\n  padding: 9px 10px 9px 30px; }\n  .menu-checkbox:not(:last-child) {\n    border-bottom: 1px solid #d3d6db; }\n  .menu-checkbox input {\n    left: 8px;\n    top: 10px; }\n\n.menu {\n  border: 1px solid #d3d6db;\n  border-radius: 5px; }\n  .menu:not(:last-child) {\n    margin-bottom: 20px; }\n\n.block:not(:last-child) {\n  margin-bottom: 20px; }\n\n.header {\n  background: white;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);\n  display: flex;\n  height: 50px;\n  line-height: 24px;\n  position: relative;\n  text-align: center;\n  z-index: 2; }\n  .header:after {\n    clear: both;\n    content: \" \";\n    display: table; }\n  .header .container {\n    align-items: stretch;\n    box-shadow: 0 1px 0 rgba(211, 214, 219, 0.3);\n    display: flex;\n    width: 100%; }\n  @media screen and (min-width: 769px) {\n    .header {\n      height: 50px; } }\n\n@media screen and (min-width: 769px) {\n  .header-toggle {\n    display: none; } }\n\n.header-item {\n  align-items: center;\n  display: flex;\n  padding: 10px; }\n  .header-item img {\n    max-height: 24px; }\n  .header-item a {\n    color: #69707a; }\n    .header-item a:hover {\n      color: #222324; }\n    .header-item a.is-active {\n      color: #222324; }\n  .header-item .fa {\n    font-size: 21px;\n    line-height: 24px; }\n\n.header-icon {\n  display: inline-block;\n  font-size: 14px;\n  height: 24px;\n  line-height: 24px;\n  text-align: center;\n  vertical-align: top;\n  width: 24px;\n  color: #69707a;\n  margin: 0 5px; }\n  .header-icon:hover {\n    color: #222324; }\n\n.header-tab {\n  align-items: center;\n  border-bottom: 1px solid transparent;\n  color: #69707a;\n  display: block;\n  height: 50px;\n  line-height: 24px;\n  padding: 13px 15px; }\n  .header-tab:hover {\n    border-bottom: 1px solid #1fc8db; }\n  .header-tab.is-active {\n    border-bottom: 3px solid #1fc8db;\n    color: #1fc8db; }\n\n.header-left {\n  align-items: stretch;\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  overflow-x: auto;\n  white-space: nowrap; }\n  @media screen and (min-width: 980px) {\n    .header-left .header-item:first-child {\n      padding-left: 0; } }\n\n.header-center {\n  align-items: stretch;\n  display: flex;\n  left: 50%;\n  position: absolute;\n  transform: translateX(-50%); }\n\n.header-right {\n  align-items: stretch; }\n  @media screen and (min-width: 769px) {\n    .header-right {\n      display: flex; } }\n  @media screen and (min-width: 980px) {\n    .header-right .header-item:last-child {\n      padding-right: 0; } }\n\n.header-full {\n  align-items: stretch;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n  width: 100%; }\n  .header-full > .header-item {\n    align-items: stretch;\n    display: flex;\n    flex: 1;\n    justify-content: center;\n    padding: 0; }\n    .header-full > .header-item > a {\n      align-items: center;\n      display: flex;\n      justify-content: center;\n      width: 100%; }\n\n@media screen and (max-width: 768px) {\n  .header-menu {\n    background: white;\n    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);\n    display: none;\n    min-width: 120px;\n    position: absolute;\n    right: 0;\n    top: 50px;\n    z-index: 100; }\n    .header-menu .header-item {\n      border-top: 1px solid rgba(211, 214, 219, 0.5);\n      padding: 10px; }\n    .header-menu.is-active {\n      display: block; } }\n\n.header.is-centered {\n  justify-content: center; }\n  .header.is-centered .header-left,\n  .header.is-centered .header-center,\n  .header.is-centered .header-right {\n    justify-content: center; }\n\n.header.is-small {\n  background: #f5f7fa;\n  box-shadow: none;\n  height: 40px;\n  z-index: 1; }\n  .header.is-small .container {\n    height: 40px; }\n  .header.is-small .header-tab {\n    font-size: 13px;\n    height: 40px;\n    padding: 8px 10px; }\n    .header.is-small .header-tab:hover, .header.is-small .header-tab.is-active {\n      border-bottom-width: 2px; }\n\n.hero-video {\n  bottom: 0;\n  left: 0;\n  position: absolute;\n  right: 0;\n  top: 0;\n  overflow: hidden; }\n  .hero-video.is-transparent {\n    opacity: 0.3; }\n  .hero-video video {\n    left: 50%;\n    min-height: 100%;\n    min-width: 100%;\n    position: absolute;\n    top: 50%;\n    transform: translate3d(-50%, -50%, 0); }\n  @media screen and (max-width: 768px) {\n    .hero-video {\n      display: none; } }\n\n.hero-content {\n  padding: 40px 20px; }\n  @media screen and (min-width: 980px) {\n    .hero-content {\n      padding: 40px 0; } }\n\n.hero-buttons {\n  margin-top: 20px; }\n  @media screen and (max-width: 768px) {\n    .hero-buttons .button {\n      display: block; }\n      .hero-buttons .button:not(:last-child) {\n        margin-bottom: 10px; } }\n  @media screen and (min-width: 769px) {\n    .hero-buttons {\n      display: flex;\n      justify-content: center; }\n      .hero-buttons .button:not(:last-child) {\n        margin-right: 20px; } }\n\n.hero {\n  background: white;\n  text-align: center; }\n  .hero .header {\n    background: none;\n    box-shadow: none; }\n  .hero .tabs a {\n    border: none; }\n  .hero .tabs ul {\n    border-bottom: none; }\n  .hero.is-alt {\n    background: #f5f7fa;\n    color: #aeb1b5; }\n  .hero.is-dark {\n    background: #222324;\n    color: white; }\n    .hero.is-dark .title {\n      color: white; }\n      .hero.is-dark .title a,\n      .hero.is-dark .title strong {\n        color: inherit; }\n    .hero.is-dark .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-dark .subtitle strong {\n        color: white; }\n    .hero.is-dark .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-dark .header-icon,\n    .hero.is-dark .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-dark .header-icon:hover, .hero.is-dark .header-icon.is-active,\n      .hero.is-dark .header-item > a:not(.button):hover,\n      .hero.is-dark .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-dark .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-dark .tabs a:hover {\n        opacity: 1; }\n    .hero.is-dark .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-dark .tabs.is-boxed a, .hero.is-dark .tabs.is-toggle a {\n      color: white; }\n      .hero.is-dark .tabs.is-boxed a:hover, .hero.is-dark .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-dark .tabs.is-boxed li.is-active a, .hero.is-dark .tabs.is-boxed li.is-active a:hover, .hero.is-dark .tabs.is-toggle li.is-active a, .hero.is-dark .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #222324; }\n    .hero.is-dark.is-bold {\n      background-image: linear-gradient(141deg, #080a0b 0%, #222324 71%, #2c2e34 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-dark .header-toggle span {\n        background: white; }\n      .hero.is-dark .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-dark .header-toggle.is-active span {\n        background: white; }\n      .hero.is-dark .header-menu {\n        background: #222324; }\n        .hero.is-dark .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  .hero.is-primary {\n    background: #1fc8db;\n    color: white; }\n    .hero.is-primary .title {\n      color: white; }\n      .hero.is-primary .title a,\n      .hero.is-primary .title strong {\n        color: inherit; }\n    .hero.is-primary .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-primary .subtitle strong {\n        color: white; }\n    .hero.is-primary .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-primary .header-icon,\n    .hero.is-primary .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-primary .header-icon:hover, .hero.is-primary .header-icon.is-active,\n      .hero.is-primary .header-item > a:not(.button):hover,\n      .hero.is-primary .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-primary .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-primary .tabs a:hover {\n        opacity: 1; }\n    .hero.is-primary .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-primary .tabs.is-boxed a, .hero.is-primary .tabs.is-toggle a {\n      color: white; }\n      .hero.is-primary .tabs.is-boxed a:hover, .hero.is-primary .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-primary .tabs.is-boxed li.is-active a, .hero.is-primary .tabs.is-boxed li.is-active a:hover, .hero.is-primary .tabs.is-toggle li.is-active a, .hero.is-primary .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #1fc8db; }\n    .hero.is-primary.is-bold {\n      background-image: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 71%, #2cb5e8 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-primary .header-toggle span {\n        background: white; }\n      .hero.is-primary .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-primary .header-toggle.is-active span {\n        background: white; }\n      .hero.is-primary .header-menu {\n        background: #1fc8db; }\n        .hero.is-primary .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  .hero.is-info {\n    background: #42afe3;\n    color: white; }\n    .hero.is-info .title {\n      color: white; }\n      .hero.is-info .title a,\n      .hero.is-info .title strong {\n        color: inherit; }\n    .hero.is-info .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-info .subtitle strong {\n        color: white; }\n    .hero.is-info .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-info .header-icon,\n    .hero.is-info .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-info .header-icon:hover, .hero.is-info .header-icon.is-active,\n      .hero.is-info .header-item > a:not(.button):hover,\n      .hero.is-info .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-info .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-info .tabs a:hover {\n        opacity: 1; }\n    .hero.is-info .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-info .tabs.is-boxed a, .hero.is-info .tabs.is-toggle a {\n      color: white; }\n      .hero.is-info .tabs.is-boxed a:hover, .hero.is-info .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-info .tabs.is-boxed li.is-active a, .hero.is-info .tabs.is-boxed li.is-active a:hover, .hero.is-info .tabs.is-toggle li.is-active a, .hero.is-info .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #42afe3; }\n    .hero.is-info.is-bold {\n      background-image: linear-gradient(141deg, #13bfdf 0%, #42afe3 71%, #53a1eb 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-info .header-toggle span {\n        background: white; }\n      .hero.is-info .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-info .header-toggle.is-active span {\n        background: white; }\n      .hero.is-info .header-menu {\n        background: #42afe3; }\n        .hero.is-info .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  .hero.is-success {\n    background: #97cd76;\n    color: white; }\n    .hero.is-success .title {\n      color: white; }\n      .hero.is-success .title a,\n      .hero.is-success .title strong {\n        color: inherit; }\n    .hero.is-success .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-success .subtitle strong {\n        color: white; }\n    .hero.is-success .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-success .header-icon,\n    .hero.is-success .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-success .header-icon:hover, .hero.is-success .header-icon.is-active,\n      .hero.is-success .header-item > a:not(.button):hover,\n      .hero.is-success .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-success .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-success .tabs a:hover {\n        opacity: 1; }\n    .hero.is-success .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-success .tabs.is-boxed a, .hero.is-success .tabs.is-toggle a {\n      color: white; }\n      .hero.is-success .tabs.is-boxed a:hover, .hero.is-success .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-success .tabs.is-boxed li.is-active a, .hero.is-success .tabs.is-boxed li.is-active a:hover, .hero.is-success .tabs.is-toggle li.is-active a, .hero.is-success .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #97cd76; }\n    .hero.is-success.is-bold {\n      background-image: linear-gradient(141deg, #8ecb45 0%, #97cd76 71%, #96d885 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-success .header-toggle span {\n        background: white; }\n      .hero.is-success .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-success .header-toggle.is-active span {\n        background: white; }\n      .hero.is-success .header-menu {\n        background: #97cd76; }\n        .hero.is-success .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  .hero.is-warning {\n    background: #fce473;\n    color: rgba(0, 0, 0, 0.5); }\n    .hero.is-warning .title {\n      color: rgba(0, 0, 0, 0.5); }\n      .hero.is-warning .title a,\n      .hero.is-warning .title strong {\n        color: inherit; }\n    .hero.is-warning .subtitle {\n      color: rgba(0, 0, 0, 0.7); }\n      .hero.is-warning .subtitle strong {\n        color: rgba(0, 0, 0, 0.5); }\n    .hero.is-warning .header .container {\n      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2); }\n    .hero.is-warning .header-icon,\n    .hero.is-warning .header-item > a:not(.button) {\n      color: rgba(0, 0, 0, 0.5);\n      opacity: 0.5; }\n      .hero.is-warning .header-icon:hover, .hero.is-warning .header-icon.is-active,\n      .hero.is-warning .header-item > a:not(.button):hover,\n      .hero.is-warning .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-warning .tabs a {\n      color: rgba(0, 0, 0, 0.5);\n      opacity: 0.5; }\n      .hero.is-warning .tabs a:hover {\n        opacity: 1; }\n    .hero.is-warning .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-warning .tabs.is-boxed a, .hero.is-warning .tabs.is-toggle a {\n      color: rgba(0, 0, 0, 0.5); }\n      .hero.is-warning .tabs.is-boxed a:hover, .hero.is-warning .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-warning .tabs.is-boxed li.is-active a, .hero.is-warning .tabs.is-boxed li.is-active a:hover, .hero.is-warning .tabs.is-toggle li.is-active a, .hero.is-warning .tabs.is-toggle li.is-active a:hover {\n      background: rgba(0, 0, 0, 0.5);\n      color: #fce473; }\n    .hero.is-warning.is-bold {\n      background-image: linear-gradient(141deg, #ffbd3d 0%, #fce473 71%, #fffe8a 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-warning .header-toggle span {\n        background: rgba(0, 0, 0, 0.5); }\n      .hero.is-warning .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-warning .header-toggle.is-active span {\n        background: rgba(0, 0, 0, 0.5); }\n      .hero.is-warning .header-menu {\n        background: #fce473; }\n        .hero.is-warning .header-menu .header-item {\n          border-top-color: rgba(0, 0, 0, 0.2); } }\n  .hero.is-danger {\n    background: #ed6c63;\n    color: white; }\n    .hero.is-danger .title {\n      color: white; }\n      .hero.is-danger .title a,\n      .hero.is-danger .title strong {\n        color: inherit; }\n    .hero.is-danger .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-danger .subtitle strong {\n        color: white; }\n    .hero.is-danger .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-danger .header-icon,\n    .hero.is-danger .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-danger .header-icon:hover, .hero.is-danger .header-icon.is-active,\n      .hero.is-danger .header-item > a:not(.button):hover,\n      .hero.is-danger .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-danger .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-danger .tabs a:hover {\n        opacity: 1; }\n    .hero.is-danger .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-danger .tabs.is-boxed a, .hero.is-danger .tabs.is-toggle a {\n      color: white; }\n      .hero.is-danger .tabs.is-boxed a:hover, .hero.is-danger .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-danger .tabs.is-boxed li.is-active a, .hero.is-danger .tabs.is-boxed li.is-active a:hover, .hero.is-danger .tabs.is-toggle li.is-active a, .hero.is-danger .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #ed6c63; }\n    .hero.is-danger.is-bold {\n      background-image: linear-gradient(141deg, #f32a3e 0%, #ed6c63 71%, #f39376 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-danger .header-toggle span {\n        background: white; }\n      .hero.is-danger .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-danger .header-toggle.is-active span {\n        background: white; }\n      .hero.is-danger .header-menu {\n        background: #ed6c63; }\n        .hero.is-danger .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  @media screen and (min-width: 769px) {\n    .hero.is-fullheight .tabs, .hero.is-large .tabs {\n      font-size: 18px; } }\n  @media screen and (min-width: 769px) {\n    .hero.is-medium .hero-content {\n      padding: 120px 20px; } }\n  @media screen and (min-width: 980px) {\n    .hero.is-medium .hero-content {\n      padding: 120px 0; } }\n  .hero.is-large .tabs a {\n    padding: 10px 15px; }\n  @media screen and (min-width: 769px) {\n    .hero.is-large .hero-content {\n      padding: 240px 20px; } }\n  @media screen and (min-width: 980px) {\n    .hero.is-large .hero-content {\n      padding: 240px 0; } }\n  .hero.is-fullheight {\n    align-items: stretch;\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    min-height: 100vh; }\n    .hero.is-fullheight .tabs a {\n      padding: 15px 20px; }\n    .hero.is-fullheight .hero-content {\n      display: flex;\n      flex: 1;\n      flex-direction: column;\n      justify-content: center; }\n  .hero.is-left {\n    text-align: left; }\n  .hero.is-right {\n    text-align: right; }\n\n.section {\n  background: white;\n  padding: 40px 20px; }\n  .section + .section {\n    border-top: 1px solid rgba(211, 214, 219, 0.5); }\n  @media screen and (min-width: 980px) {\n    .section {\n      padding: 40px 0; }\n      .section.is-medium {\n        padding: 120px 0; }\n      .section.is-large {\n        padding: 240px 0; } }\n\n.footer {\n  background: #f5f7fa;\n  padding: 40px 20px 80px; }\n  .footer a {\n    color: #69707a; }\n    .footer a:hover {\n      color: #222324; }\n    .footer a:not(.icon) {\n      border-bottom: 1px solid #d3d6db; }\n      .footer a:not(.icon):hover {\n        border-bottom-color: #1fc8db; }\n\nlabel {\n  display: block; }\n\n.notes li {\n  margin: 6px;\n  display: inline-block; }\n\n.tag-info {\n  border: 1px solid #69707a;\n  padding: 10px; }\n\n.tags li {\n  margin: 0 5px;\n  display: inline-block; }\n", ""]);
+	exports.push([module.id, "html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, menu, nav, section, time, mark, audio, video, details, summary {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font-weight: normal;\n  vertical-align: baseline;\n  background: transparent; }\n\narticle, aside, figure, footer, header, nav, section, details, summary {\n  display: block; }\n\nhtml {\n  box-sizing: border-box; }\n\n*,\n*:before,\n*:after {\n  box-sizing: inherit; }\n\nimg,\nobject,\nembed {\n  max-width: 100%; }\n\nhtml {\n  overflow-y: scroll; }\n\nul {\n  list-style: none; }\n\nblockquote, q {\n  quotes: none; }\n\nblockquote:before,\nblockquote:after,\nq:before,\nq:after {\n  content: '';\n  content: none; }\n\na {\n  margin: 0;\n  padding: 0;\n  font-size: 100%;\n  vertical-align: baseline;\n  background: transparent; }\n\ndel {\n  text-decoration: line-through; }\n\nabbr[title], dfn[title] {\n  border-bottom: 1px dotted #000;\n  cursor: help; }\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n\nth {\n  font-weight: bold;\n  vertical-align: bottom; }\n\ntd {\n  font-weight: normal;\n  vertical-align: top; }\n\nhr {\n  display: block;\n  height: 1px;\n  border: 0;\n  border-top: 1px solid #ccc;\n  margin: 1em 0;\n  padding: 0; }\n\ninput, select {\n  vertical-align: middle; }\n\npre {\n  white-space: pre;\n  white-space: pre-wrap;\n  white-space: pre-line;\n  word-wrap: break-word; }\n\ninput[type=\"radio\"] {\n  vertical-align: text-bottom; }\n\ninput[type=\"checkbox\"] {\n  vertical-align: bottom; }\n\nselect, input, textarea {\n  font: 99% sans-serif; }\n\ntable {\n  font-size: inherit;\n  font: 100%; }\n\nsmall {\n  font-size: 85%; }\n\nstrong {\n  font-weight: bold; }\n\ntd, td img {\n  vertical-align: top; }\n\nsub, sup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative; }\n\nsup {\n  top: -0.5em; }\n\nsub {\n  bottom: -0.25em; }\n\npre, code, kbd, samp {\n  font-family: monospace, sans-serif; }\n\nlabel,\ninput[type=button],\ninput[type=submit],\ninput[type=file],\nbutton {\n  cursor: pointer; }\n\nbutton, input, select, textarea {\n  margin: 0; }\n\nbutton,\ninput[type=button] {\n  width: auto;\n  overflow: visible; }\n\n@keyframes spin-around {\n  from {\n    transform: rotate(0deg); }\n  to {\n    transform: rotate(359deg); } }\n\nhtml {\n  background: #f5f7fa;\n  font-size: 14px;\n  -moz-osx-font-smoothing: grayscale;\n  -webkit-font-smoothing: antialiased;\n  min-width: 300px;\n  overflow-x: hidden;\n  overflow-y: scroll;\n  text-rendering: optimizeLegibility; }\n\nbody,\nbutton,\ninput,\nselect,\ntextarea {\n  font-family: \"Helvetica Neue\", \"Helvetica\", \"Arial\", sans-serif; }\n\ncode,\npre {\n  -moz-osx-font-smoothing: auto;\n  -webkit-font-smoothing: auto;\n  font-family: monospace;\n  line-height: 1.25; }\n\nbody {\n  color: #69707a;\n  font-size: 1rem;\n  line-height: 1.428571428571429; }\n\na {\n  color: #1fc8db;\n  cursor: pointer;\n  text-decoration: none;\n  transition: none 86ms ease-out; }\n  a:hover {\n    color: #222324; }\n\ncode {\n  background: #f5f7fa;\n  color: #ed6c63;\n  font-size: 12px;\n  font-weight: normal;\n  padding: 1px 2px 2px; }\n\nhr {\n  border-top-color: #d3d6db;\n  margin: 20px 0; }\n\nimg {\n  max-height: 100%;\n  max-width: 100%; }\n\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  vertical-align: baseline; }\n\nsmall {\n  font-size: 11px; }\n\nstrong {\n  color: #222324; }\n\narticle,\naside,\nfigure,\nfooter,\nheader,\nhgroup,\nsection {\n  display: block; }\n\npre {\n  background: #f5f7fa;\n  color: #69707a;\n  white-space: pre;\n  word-wrap: normal; }\n  pre code {\n    background: #f5f7fa;\n    color: #69707a;\n    display: block;\n    overflow-x: auto;\n    padding: 16px 20px; }\n\ntable {\n  width: 100%; }\n  table th,\n  table td {\n    text-align: left;\n    vertical-align: top; }\n  table th {\n    color: #222324; }\n\n.container {\n  margin: 0 auto;\n  max-width: 960px;\n  position: relative; }\n\n.fa {\n  font-size: 21px;\n  text-align: center;\n  vertical-align: top; }\n\n.content.is-medium {\n  font-size: 18px; }\n  .content.is-medium code {\n    font-size: 14px; }\n\n.content.is-large {\n  font-size: 24px; }\n  .content.is-large code {\n    font-size: 18px; }\n\n.content:not(:last-child) {\n  margin-bottom: 20px; }\n\n.content h1,\n.content h2,\n.content h3,\n.content h4,\n.content h5,\n.content h6 {\n  color: #222324;\n  font-weight: 300;\n  line-height: 1.125;\n  margin-bottom: 20px; }\n\n.content h1:not(:first-child),\n.content h2:not(:first-child),\n.content h3:not(:first-child) {\n  margin-top: 40px; }\n\n.content h1 {\n  font-size: 2em; }\n\n.content h2 {\n  font-size: 1.75em; }\n\n.content h3 {\n  font-size: 1.5em; }\n\n.content h4 {\n  font-size: 1.25em; }\n\n.content h5 {\n  font-size: 1.125em; }\n\n.content h6 {\n  font-size: 1em; }\n\n.content p:not(:last-child) {\n  margin-bottom: 1em; }\n\n.content li + li {\n  margin-top: 0.25em; }\n\n.content ol {\n  list-style: decimal outside;\n  margin: 1em 2em; }\n\n.content ul {\n  list-style: disc outside;\n  margin: 1em 2em; }\n  .content ul ul {\n    list-style-type: circle;\n    margin-top: 0.5em; }\n    .content ul ul ul {\n      list-style-type: square; }\n\n.content blockquote {\n  background: #f5f7fa;\n  border-left: 5px solid #d3d6db;\n  padding: 1.5em; }\n  .content blockquote:not(:last-child) {\n    margin-bottom: 1em; }\n\n.highlight {\n  background-color: #fdf6e3;\n  color: #586e75; }\n  .highlight .c {\n    color: #93a1a1; }\n  .highlight .err,\n  .highlight .g {\n    color: #586e75; }\n  .highlight .k {\n    color: #859900; }\n  .highlight .l,\n  .highlight .n {\n    color: #586e75; }\n  .highlight .o {\n    color: #859900; }\n  .highlight .x {\n    color: #cb4b16; }\n  .highlight .p {\n    color: #586e75; }\n  .highlight .cm {\n    color: #93a1a1; }\n  .highlight .cp {\n    color: #859900; }\n  .highlight .c1 {\n    color: #93a1a1; }\n  .highlight .cs {\n    color: #859900; }\n  .highlight .gd {\n    color: #2aa198; }\n  .highlight .ge {\n    color: #586e75;\n    font-style: italic; }\n  .highlight .gr {\n    color: #dc322f; }\n  .highlight .gh {\n    color: #cb4b16; }\n  .highlight .gi {\n    color: #859900; }\n  .highlight .go,\n  .highlight .gp {\n    color: #586e75; }\n  .highlight .gs {\n    color: #586e75;\n    font-weight: bold; }\n  .highlight .gu {\n    color: #cb4b16; }\n  .highlight .gt {\n    color: #586e75; }\n  .highlight .kc {\n    color: #cb4b16; }\n  .highlight .kd {\n    color: #268bd2; }\n  .highlight .kn,\n  .highlight .kp {\n    color: #859900; }\n  .highlight .kr {\n    color: #268bd2; }\n  .highlight .kt {\n    color: #dc322f; }\n  .highlight .ld {\n    color: #586e75; }\n  .highlight .m,\n  .highlight .s {\n    color: #2aa198; }\n  .highlight .na {\n    color: #B58900; }\n  .highlight .nb {\n    color: #586e75; }\n  .highlight .nc {\n    color: #268bd2; }\n  .highlight .no {\n    color: #cb4b16; }\n  .highlight .nd {\n    color: #268bd2; }\n  .highlight .ni,\n  .highlight .ne {\n    color: #cb4b16; }\n  .highlight .nf {\n    color: #268bd2; }\n  .highlight .nl,\n  .highlight .nn,\n  .highlight .nx,\n  .highlight .py {\n    color: #586e75; }\n  .highlight .nt,\n  .highlight .nv {\n    color: #268bd2; }\n  .highlight .ow {\n    color: #859900; }\n  .highlight .w {\n    color: #586e75; }\n  .highlight .mf,\n  .highlight .mh,\n  .highlight .mi,\n  .highlight .mo {\n    color: #2aa198; }\n  .highlight .sb {\n    color: #93a1a1; }\n  .highlight .sc {\n    color: #2aa198; }\n  .highlight .sd {\n    color: #586e75; }\n  .highlight .s2 {\n    color: #2aa198; }\n  .highlight .se {\n    color: #cb4b16; }\n  .highlight .sh {\n    color: #586e75; }\n  .highlight .si,\n  .highlight .sx {\n    color: #2aa198; }\n  .highlight .sr {\n    color: #dc322f; }\n  .highlight .s1,\n  .highlight .ss {\n    color: #2aa198; }\n  .highlight .bp,\n  .highlight .vc,\n  .highlight .vg,\n  .highlight .vi {\n    color: #268bd2; }\n  .highlight .il {\n    color: #2aa198; }\n\n.is-centered {\n  text-align: center; }\n\n.is-left {\n  text-align: left; }\n\n.is-right {\n  text-align: right; }\n\n.is-block {\n  display: block; }\n\n.is-inline {\n  display: inline; }\n\n.is-flex {\n  display: flex; }\n\n.is-clearfix:after {\n  clear: both;\n  content: \" \";\n  display: table; }\n\n.is-pulled-left {\n  float: left; }\n\n.is-pulled-right {\n  float: right; }\n\n.is-fullwidth {\n  width: 100%; }\n\n@media screen and (max-width: 768px) {\n  .is-hidden-mobile {\n    display: none !important; } }\n\n@media screen and (min-width: 769px) {\n  .is-hidden-tablet {\n    display: none !important; } }\n\n@media screen and (max-width: 979px) {\n  .is-hidden-touch {\n    display: none !important; } }\n\n@media screen and (min-width: 980px) {\n  .is-hidden-desktop {\n    display: none !important; } }\n\n.is-disabled {\n  pointer-events: none; }\n\n.is-marginless {\n  margin: 0 !important; }\n\n.is-unselectable {\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.input, .textarea {\n  -moz-appearance: none;\n  -webkit-appearance: none;\n  background: white;\n  border: 1px solid #d3d6db;\n  border-radius: 3px;\n  color: #222324;\n  display: inline-block;\n  font-size: 14px;\n  height: 32px;\n  line-height: 24px;\n  padding: 3px 8px;\n  position: relative;\n  vertical-align: top;\n  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);\n  display: block;\n  max-width: 100%;\n  width: 100%; }\n  .input:hover, .textarea:hover {\n    border-color: #aeb1b5; }\n  .input:active, .textarea:active, .input:focus, .textarea:focus {\n    border-color: #1fc8db;\n    outline: none; }\n  .input[disabled], [disabled].textarea, .input[disabled]:hover, [disabled].textarea:hover {\n    background: #f5f7fa;\n    border-color: #d3d6db; }\n    .input[disabled]::-moz-placeholder, [disabled].textarea::-moz-placeholder, .input[disabled]:hover::-moz-placeholder, [disabled].textarea:hover::-moz-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .input[disabled]::-webkit-input-placeholder, [disabled].textarea::-webkit-input-placeholder, .input[disabled]:hover::-webkit-input-placeholder, [disabled].textarea:hover::-webkit-input-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .input[disabled]:-moz-placeholder, [disabled].textarea:-moz-placeholder, .input[disabled]:hover:-moz-placeholder, [disabled].textarea:hover:-moz-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .input[disabled]:-ms-input-placeholder, [disabled].textarea:-ms-input-placeholder, .input[disabled]:hover:-ms-input-placeholder, [disabled].textarea:hover:-ms-input-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n  .input[type=\"search\"], [type=\"search\"].textarea {\n    border-radius: 290486px; }\n  .input.is-flat, .is-flat.textarea {\n    border: none;\n    box-shadow: none;\n    padding: 4px 8px; }\n  .input.is-small, .is-small.textarea {\n    border-radius: 2px;\n    font-size: 11px;\n    height: 24px;\n    line-height: 16px;\n    padding: 3px 6px; }\n    .input.is-small.is-flat, .is-small.is-flat.textarea {\n      padding: 4px 6px; }\n  .input.is-medium, .is-medium.textarea {\n    font-size: 18px;\n    height: 40px;\n    line-height: 32px;\n    padding: 3px 10px; }\n    .input.is-medium.is-flat, .is-medium.is-flat.textarea {\n      padding: 4px 10px; }\n  .input.is-large, .is-large.textarea {\n    font-size: 24px;\n    height: 48px;\n    line-height: 40px;\n    padding: 3px 12px; }\n    .input.is-large.is-flat, .is-large.is-flat.textarea {\n      padding: 4px 12px; }\n  .input.is-fullwidth, .is-fullwidth.textarea {\n    display: block;\n    width: 100%; }\n  .input.is-inline, .is-inline.textarea {\n    display: inline;\n    width: auto; }\n\n.textarea {\n  line-height: 1.2;\n  max-height: 600px;\n  max-width: 100%;\n  min-height: 120px;\n  min-width: 100%;\n  padding: 10px;\n  resize: vertical; }\n\n.checkbox, .menu-checkbox, .radio {\n  cursor: pointer;\n  display: inline-block;\n  line-height: 16px;\n  padding-left: 18px;\n  position: relative;\n  vertical-align: top; }\n  .checkbox input, .menu-checkbox input, .radio input {\n    -moz-appearance: none;\n    -webkit-appearance: none;\n    background: white;\n    border: 1px solid #d3d6db;\n    border-radius: 3px;\n    color: #222324;\n    display: inline-block;\n    font-size: 14px;\n    height: 32px;\n    line-height: 24px;\n    padding: 3px 8px;\n    position: relative;\n    vertical-align: top;\n    border-radius: 1px;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);\n    cursor: pointer;\n    float: left;\n    height: 14px;\n    left: 0;\n    outline: none;\n    padding: 0;\n    position: absolute;\n    top: 1px;\n    width: 14px; }\n    .checkbox input:hover, .menu-checkbox input:hover, .radio input:hover {\n      border-color: #aeb1b5; }\n    .checkbox input:active, .menu-checkbox input:active, .radio input:active, .checkbox input:focus, .menu-checkbox input:focus, .radio input:focus {\n      border-color: #1fc8db;\n      outline: none; }\n    .checkbox input[disabled], .menu-checkbox input[disabled], .radio input[disabled], .checkbox input[disabled]:hover, .menu-checkbox input[disabled]:hover, .radio input[disabled]:hover {\n      background: #f5f7fa;\n      border-color: #d3d6db; }\n      .checkbox input[disabled]::-moz-placeholder, .menu-checkbox input[disabled]::-moz-placeholder, .radio input[disabled]::-moz-placeholder, .checkbox input[disabled]:hover::-moz-placeholder, .menu-checkbox input[disabled]:hover::-moz-placeholder, .radio input[disabled]:hover::-moz-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .checkbox input[disabled]::-webkit-input-placeholder, .menu-checkbox input[disabled]::-webkit-input-placeholder, .radio input[disabled]::-webkit-input-placeholder, .checkbox input[disabled]:hover::-webkit-input-placeholder, .menu-checkbox input[disabled]:hover::-webkit-input-placeholder, .radio input[disabled]:hover::-webkit-input-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .checkbox input[disabled]:-moz-placeholder, .menu-checkbox input[disabled]:-moz-placeholder, .radio input[disabled]:-moz-placeholder, .checkbox input[disabled]:hover:-moz-placeholder, .menu-checkbox input[disabled]:hover:-moz-placeholder, .radio input[disabled]:hover:-moz-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .checkbox input[disabled]:-ms-input-placeholder, .menu-checkbox input[disabled]:-ms-input-placeholder, .radio input[disabled]:-ms-input-placeholder, .checkbox input[disabled]:hover:-ms-input-placeholder, .menu-checkbox input[disabled]:hover:-ms-input-placeholder, .radio input[disabled]:hover:-ms-input-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n    .checkbox input:after, .menu-checkbox input:after, .radio input:after {\n      border: 1px solid white;\n      border-right: 0;\n      border-top: 0;\n      content: \" \";\n      display: block;\n      height: 7px;\n      pointer-events: none;\n      position: absolute;\n      transform: rotate(-45deg);\n      width: 7px;\n      height: 4px;\n      left: 3px;\n      opacity: 0;\n      position: absolute;\n      top: 3px;\n      transform: rotate(-45deg) scale(1); }\n    .checkbox input:checked, .menu-checkbox input:checked, .radio input:checked {\n      background: #1fc8db;\n      border-color: #1fc8db;\n      box-shadow: none; }\n      .checkbox input:checked:after, .menu-checkbox input:checked:after, .radio input:checked:after {\n        opacity: 1; }\n  .checkbox:hover, .menu-checkbox:hover, .radio:hover {\n    color: #222324; }\n    .checkbox:hover input, .menu-checkbox:hover input, .radio:hover input {\n      border-color: #aeb1b5; }\n      .checkbox:hover input:checked, .menu-checkbox:hover input:checked, .radio:hover input:checked {\n        border-color: #1fc8db; }\n  .is-disabled.checkbox, .is-disabled.menu-checkbox, .is-disabled.radio, .is-disabled.checkbox:hover, .is-disabled.menu-checkbox:hover, .is-disabled.radio:hover {\n    color: #aeb1b5; }\n\n.radio + .radio {\n  margin-left: 10px; }\n\n.radio input {\n  border-radius: 8px; }\n  .radio input:after {\n    background: white;\n    border: 0;\n    border-radius: 2px;\n    left: 4px;\n    top: 4px;\n    transform: none;\n    width: 4px; }\n\n.select {\n  display: inline-block;\n  height: 32px;\n  position: relative;\n  vertical-align: top; }\n  .select select {\n    -moz-appearance: none;\n    -webkit-appearance: none;\n    background: white;\n    border: 1px solid #d3d6db;\n    border-radius: 3px;\n    color: #222324;\n    display: inline-block;\n    font-size: 14px;\n    height: 32px;\n    line-height: 24px;\n    padding: 3px 8px;\n    position: relative;\n    vertical-align: top;\n    cursor: pointer;\n    display: block;\n    outline: none;\n    padding-right: 36px; }\n    .select select:hover {\n      border-color: #aeb1b5; }\n    .select select:active, .select select:focus {\n      border-color: #1fc8db;\n      outline: none; }\n    .select select[disabled], .select select[disabled]:hover {\n      background: #f5f7fa;\n      border-color: #d3d6db; }\n      .select select[disabled]::-moz-placeholder, .select select[disabled]:hover::-moz-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .select select[disabled]::-webkit-input-placeholder, .select select[disabled]:hover::-webkit-input-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .select select[disabled]:-moz-placeholder, .select select[disabled]:hover:-moz-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n      .select select[disabled]:-ms-input-placeholder, .select select[disabled]:hover:-ms-input-placeholder {\n        color: rgba(34, 35, 36, 0.3); }\n    .select select:hover {\n      border-color: #aeb1b5; }\n    .select select::ms-expand {\n      display: none; }\n  .select:after {\n    border: 1px solid #1fc8db;\n    border-right: 0;\n    border-top: 0;\n    content: \" \";\n    display: block;\n    height: 7px;\n    pointer-events: none;\n    position: absolute;\n    transform: rotate(-45deg);\n    width: 7px;\n    margin-top: -6px;\n    right: 16px;\n    top: 50%; }\n  .select:hover:after {\n    border-color: #222324; }\n\n.control {\n  position: relative;\n  text-align: left; }\n  .control.is-loading:after {\n    position: absolute !important;\n    right: 8px;\n    top: 8px; }\n  .control:not(:last-child) {\n    margin-bottom: 10px; }\n  .control.is-withicon .fa {\n    display: inline-block;\n    font-size: 14px;\n    height: 20px;\n    line-height: 20px;\n    text-align: center;\n    vertical-align: top;\n    width: 20px;\n    color: #aeb1b5;\n    left: 6px;\n    pointer-events: none;\n    position: absolute;\n    top: 6px;\n    z-index: 1; }\n  .control.is-withicon .input, .control.is-withicon .textarea {\n    padding-left: 32px; }\n    .control.is-withicon .input:focus + .fa, .control.is-withicon .textarea:focus + .fa {\n      color: #1fc8db; }\n  .control.is-horizontal {\n    display: flex; }\n    .control.is-horizontal > .button:not(:last-child),\n    .control.is-horizontal > .input:not(:last-child),\n    .control.is-horizontal > .textarea:not(:last-child),\n    .control.is-horizontal > .select:not(:last-child) {\n      margin-right: 10px; }\n    .control.is-horizontal > .input, .control.is-horizontal > .textarea {\n      flex: 1; }\n  .control.is-grouped {\n    display: flex; }\n    .control.is-grouped .input, .control.is-grouped .textarea,\n    .control.is-grouped .button,\n    .control.is-grouped .select {\n      border-radius: 0;\n      margin-right: -1px; }\n      .control.is-grouped .input:hover, .control.is-grouped .textarea:hover,\n      .control.is-grouped .button:hover,\n      .control.is-grouped .select:hover {\n        z-index: 2; }\n      .control.is-grouped .input:active, .control.is-grouped .textarea:active, .control.is-grouped .input:focus, .control.is-grouped .textarea:focus,\n      .control.is-grouped .button:active,\n      .control.is-grouped .button:focus,\n      .control.is-grouped .select:active,\n      .control.is-grouped .select:focus {\n        z-index: 3; }\n      .control.is-grouped .input:first-child, .control.is-grouped .textarea:first-child,\n      .control.is-grouped .button:first-child,\n      .control.is-grouped .select:first-child {\n        border-radius: 3px 0 0 3px; }\n        .control.is-grouped .input:first-child select, .control.is-grouped .textarea:first-child select,\n        .control.is-grouped .button:first-child select,\n        .control.is-grouped .select:first-child select {\n          border-radius: 3px 0 0 3px; }\n      .control.is-grouped .input:last-child, .control.is-grouped .textarea:last-child,\n      .control.is-grouped .button:last-child,\n      .control.is-grouped .select:last-child {\n        border-radius: 0 3px 3px 0; }\n    .control.is-grouped.is-centered {\n      justify-content: center; }\n\n.button {\n  -moz-appearance: none;\n  -webkit-appearance: none;\n  background: white;\n  border: 1px solid #d3d6db;\n  border-radius: 3px;\n  color: #222324;\n  display: inline-block;\n  font-size: 14px;\n  height: 32px;\n  line-height: 24px;\n  padding: 3px 8px;\n  position: relative;\n  vertical-align: top;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  padding: 3px 10px;\n  text-align: center;\n  white-space: nowrap; }\n  .button:hover {\n    border-color: #aeb1b5; }\n  .button:active, .button:focus {\n    border-color: #1fc8db;\n    outline: none; }\n  .button[disabled], .button[disabled]:hover {\n    background: #f5f7fa;\n    border-color: #d3d6db; }\n    .button[disabled]::-moz-placeholder, .button[disabled]:hover::-moz-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .button[disabled]::-webkit-input-placeholder, .button[disabled]:hover::-webkit-input-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .button[disabled]:-moz-placeholder, .button[disabled]:hover:-moz-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n    .button[disabled]:-ms-input-placeholder, .button[disabled]:hover:-ms-input-placeholder {\n      color: rgba(34, 35, 36, 0.3); }\n  .button strong {\n    color: inherit; }\n  .button small {\n    display: block;\n    font-size: 11px;\n    line-height: 1;\n    margin-top: 5px; }\n  .button .fa {\n    line-height: 24px;\n    margin: 0 -2px;\n    width: 24px; }\n  .button:hover {\n    color: #222324; }\n  .button:active {\n    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2); }\n  .button.is-dark {\n    background: #222324;\n    border-color: transparent;\n    color: white; }\n    .button.is-dark:hover, .button.is-dark:focus {\n      background: #090a0a;\n      border-color: transparent;\n      color: white; }\n    .button.is-dark:active {\n      border-color: transparent; }\n    .button.is-dark.is-outlined {\n      background: transparent;\n      border-color: #222324;\n      color: #222324; }\n      .button.is-dark.is-outlined:hover, .button.is-dark.is-outlined:focus {\n        border-color: #090a0a;\n        color: #090a0a; }\n    .button.is-dark.is-inverted {\n      background: white;\n      color: #222324; }\n      .button.is-dark.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-dark.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-dark.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-dark.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-primary {\n    background: #1fc8db;\n    border-color: transparent;\n    color: white; }\n    .button.is-primary:hover, .button.is-primary:focus {\n      background: #199fae;\n      border-color: transparent;\n      color: white; }\n    .button.is-primary:active {\n      border-color: transparent; }\n    .button.is-primary.is-outlined {\n      background: transparent;\n      border-color: #1fc8db;\n      color: #1fc8db; }\n      .button.is-primary.is-outlined:hover, .button.is-primary.is-outlined:focus {\n        border-color: #199fae;\n        color: #199fae; }\n    .button.is-primary.is-inverted {\n      background: white;\n      color: #1fc8db; }\n      .button.is-primary.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-primary.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-primary.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-primary.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-info {\n    background: #42afe3;\n    border-color: transparent;\n    color: white; }\n    .button.is-info:hover, .button.is-info:focus {\n      background: #1f99d3;\n      border-color: transparent;\n      color: white; }\n    .button.is-info:active {\n      border-color: transparent; }\n    .button.is-info.is-outlined {\n      background: transparent;\n      border-color: #42afe3;\n      color: #42afe3; }\n      .button.is-info.is-outlined:hover, .button.is-info.is-outlined:focus {\n        border-color: #1f99d3;\n        color: #1f99d3; }\n    .button.is-info.is-inverted {\n      background: white;\n      color: #42afe3; }\n      .button.is-info.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-info.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-info.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-info.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-success {\n    background: #97cd76;\n    border-color: transparent;\n    color: white; }\n    .button.is-success:hover, .button.is-success:focus {\n      background: #7bbf51;\n      border-color: transparent;\n      color: white; }\n    .button.is-success:active {\n      border-color: transparent; }\n    .button.is-success.is-outlined {\n      background: transparent;\n      border-color: #97cd76;\n      color: #97cd76; }\n      .button.is-success.is-outlined:hover, .button.is-success.is-outlined:focus {\n        border-color: #7bbf51;\n        color: #7bbf51; }\n    .button.is-success.is-inverted {\n      background: white;\n      color: #97cd76; }\n      .button.is-success.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-success.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-success.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-success.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-warning {\n    background: #fce473;\n    border-color: transparent;\n    color: rgba(0, 0, 0, 0.5); }\n    .button.is-warning:hover, .button.is-warning:focus {\n      background: #fbda41;\n      border-color: transparent;\n      color: rgba(0, 0, 0, 0.5); }\n    .button.is-warning:active {\n      border-color: transparent; }\n    .button.is-warning.is-outlined {\n      background: transparent;\n      border-color: #fce473;\n      color: #fce473; }\n      .button.is-warning.is-outlined:hover, .button.is-warning.is-outlined:focus {\n        border-color: #fbda41;\n        color: #fbda41; }\n    .button.is-warning.is-inverted {\n      background: rgba(0, 0, 0, 0.5);\n      color: #fce473; }\n      .button.is-warning.is-inverted:hover {\n        background: rgba(0, 0, 0, 0.5); }\n      .button.is-warning.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: rgba(0, 0, 0, 0.5);\n        color: rgba(0, 0, 0, 0.5); }\n        .button.is-warning.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-warning.is-loading:after {\n      border-color: transparent transparent rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.5) !important; }\n  .button.is-danger {\n    background: #ed6c63;\n    border-color: transparent;\n    color: white; }\n    .button.is-danger:hover, .button.is-danger:focus {\n      background: #e84135;\n      border-color: transparent;\n      color: white; }\n    .button.is-danger:active {\n      border-color: transparent; }\n    .button.is-danger.is-outlined {\n      background: transparent;\n      border-color: #ed6c63;\n      color: #ed6c63; }\n      .button.is-danger.is-outlined:hover, .button.is-danger.is-outlined:focus {\n        border-color: #e84135;\n        color: #e84135; }\n    .button.is-danger.is-inverted {\n      background: white;\n      color: #ed6c63; }\n      .button.is-danger.is-inverted:hover {\n        background: #f2f2f2; }\n      .button.is-danger.is-inverted.is-outlined {\n        background-color: transparent;\n        border-color: white;\n        color: white; }\n        .button.is-danger.is-inverted.is-outlined:hover {\n          background: rgba(0, 0, 0, 0.05); }\n    .button.is-danger.is-loading:after {\n      border-color: transparent transparent white white !important; }\n  .button.is-small {\n    border-radius: 2px;\n    font-size: 11px;\n    height: 24px;\n    line-height: 16px;\n    padding: 3px 6px; }\n  .button.is-medium {\n    font-size: 18px;\n    height: 40px;\n    padding: 7px 14px; }\n  .button.is-large {\n    font-size: 22px;\n    height: 48px;\n    padding: 11px 20px; }\n  .button.is-fullwidth {\n    display: block;\n    width: 100%; }\n  .button.is-flexible {\n    height: auto; }\n  .button.is-loading {\n    color: transparent;\n    pointer-events: none; }\n    .button.is-loading:after {\n      left: 50%;\n      margin-left: -8px;\n      margin-top: -8px;\n      position: absolute;\n      top: 50%;\n      position: absolute !important; }\n  .button.is-disabled, .button[disabled] {\n    opacity: 0.5;\n    pointer-events: none; }\n  @media screen and (min-width: 769px) {\n    .button small {\n      color: #69707a;\n      left: 0;\n      margin-top: 10px;\n      position: absolute;\n      top: 100%;\n      width: 100%; } }\n\n.title,\n.subtitle {\n  font-weight: 300; }\n  .title:not(:last-child),\n  .subtitle:not(:last-child) {\n    margin-bottom: 20px; }\n\n.title {\n  color: #222324;\n  font-size: 28px;\n  line-height: 1; }\n  .title strong {\n    color: inherit; }\n  .title code {\n    display: inline-block;\n    font-size: 28px; }\n  .title + .subtitle {\n    margin-top: -10px; }\n  .title + .highlight {\n    margin-top: -10px; }\n  .title.is-normal {\n    font-weight: 400; }\n    .title.is-normal strong {\n      font-weight: 700; }\n  .title.is-1 {\n    font-size: 48px; }\n    .title.is-1 code {\n      font-size: 40px; }\n  .title.is-2 {\n    font-size: 40px; }\n    .title.is-2 code {\n      font-size: 28px; }\n  .title.is-3 {\n    font-size: 28px; }\n    .title.is-3 code {\n      font-size: 24px; }\n  .title.is-4 {\n    font-size: 24px; }\n    .title.is-4 code {\n      font-size: 18px; }\n  .title.is-5 {\n    font-size: 18px; }\n    .title.is-5 code {\n      font-size: 14px; }\n  .title.is-6 {\n    font-size: 14px; }\n    .title.is-6 code {\n      font-size: 14px; }\n  @media screen and (min-width: 769px) {\n    .title + .subtitle {\n      margin-top: -15px; } }\n\n.subtitle {\n  font-size: 18px;\n  line-height: 1.125; }\n  .subtitle + .title {\n    margin-top: -20px; }\n  .subtitle strong {\n    color: #222324;\n    font-weight: 400; }\n  .subtitle code {\n    border-radius: 3px;\n    display: inline-block;\n    font-size: 14px;\n    padding: 2px 3px;\n    vertical-align: top; }\n  .subtitle + .text {\n    margin-top: 20px; }\n  .subtitle.is-normal {\n    font-weight: 400; }\n    .subtitle.is-normal strong {\n      font-weight: 700; }\n  .subtitle.is-1 {\n    font-size: 48px; }\n    .subtitle.is-1 code {\n      font-size: 40px; }\n  .subtitle.is-2 {\n    font-size: 40px; }\n    .subtitle.is-2 code {\n      font-size: 28px; }\n  .subtitle.is-3 {\n    font-size: 28px; }\n    .subtitle.is-3 code {\n      font-size: 24px; }\n  .subtitle.is-4 {\n    font-size: 24px; }\n    .subtitle.is-4 code {\n      font-size: 18px; }\n  .subtitle.is-5 {\n    font-size: 18px; }\n    .subtitle.is-5 code {\n      font-size: 14px; }\n  .subtitle.is-6 {\n    font-size: 14px; }\n    .subtitle.is-6 code {\n      font-size: 14px; }\n\n.message-body {\n  border: 1px solid #d3d6db;\n  border-radius: 3px;\n  padding: 12px 15px; }\n  .message-body strong {\n    color: inherit; }\n\n.message-header {\n  background: #69707a;\n  border-radius: 3px 3px 0 0;\n  color: white;\n  font-size: 10px;\n  font-weight: bold;\n  letter-spacing: 1px;\n  padding: 3px 8px;\n  text-transform: uppercase; }\n  .message-header + .message-body {\n    border-radius: 0 0 3px 3px;\n    border-top: none; }\n\n.message {\n  background: #f5f7fa;\n  border-radius: 3px; }\n  .message:not(:last-child) {\n    margin-bottom: 20px; }\n  .message.is-dark {\n    background: whitesmoke; }\n    .message.is-dark .message-header {\n      background: #222324;\n      color: white; }\n    .message.is-dark .message-body {\n      border-color: #222324;\n      color: gray; }\n  .message.is-primary {\n    background: #edfbfc; }\n    .message.is-primary .message-header {\n      background: #1fc8db;\n      color: white; }\n    .message.is-primary .message-body {\n      border-color: #1fc8db;\n      color: gray; }\n  .message.is-info {\n    background: #edf7fc; }\n    .message.is-info .message-header {\n      background: #42afe3;\n      color: white; }\n    .message.is-info .message-body {\n      border-color: #42afe3;\n      color: gray; }\n  .message.is-success {\n    background: #f4faf0; }\n    .message.is-success .message-header {\n      background: #97cd76;\n      color: white; }\n    .message.is-success .message-body {\n      border-color: #97cd76;\n      color: gray; }\n  .message.is-warning {\n    background: #fffbeb; }\n    .message.is-warning .message-header {\n      background: #fce473;\n      color: rgba(0, 0, 0, 0.5); }\n    .message.is-warning .message-body {\n      border-color: #fce473;\n      color: #666666; }\n  .message.is-danger {\n    background: #fdeeed; }\n    .message.is-danger .message-header {\n      background: #ed6c63;\n      color: white; }\n    .message.is-danger .message-body {\n      border-color: #ed6c63;\n      color: gray; }\n\n.notification {\n  background: #f5f7fa;\n  border-radius: 3px;\n  padding: 16px 20px;\n  position: relative; }\n  .notification:after {\n    clear: both;\n    content: \" \";\n    display: table; }\n  .notification:not(:last-child) {\n    margin-bottom: 20px; }\n  .notification .title {\n    color: inherit; }\n  .notification.is-dark {\n    background: #222324;\n    color: white; }\n  .notification.is-primary {\n    background: #1fc8db;\n    color: white; }\n  .notification.is-info {\n    background: #42afe3;\n    color: white; }\n  .notification.is-success {\n    background: #97cd76;\n    color: white; }\n  .notification.is-warning {\n    background: #fce473;\n    color: rgba(0, 0, 0, 0.5); }\n  .notification.is-danger {\n    background: #ed6c63;\n    color: white; }\n  .notification .delete {\n    border-radius: 0 3px;\n    float: right;\n    margin: -16px -20px 0 20px; }\n\n.delete {\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -moz-appearance: none;\n  -webkit-appearance: none;\n  background: rgba(0, 0, 0, 0.2);\n  border: none;\n  border-radius: 290486px;\n  cursor: pointer;\n  display: inline-block;\n  height: 24px;\n  position: relative;\n  vertical-align: top;\n  width: 24px; }\n  .delete:before, .delete:after {\n    background: white;\n    content: \"\";\n    display: block;\n    height: 2px;\n    left: 6px;\n    position: absolute;\n    top: 11px;\n    width: 12px; }\n  .delete:before {\n    transform: rotate(45deg); }\n  .delete:after {\n    transform: rotate(-45deg); }\n  .delete:hover {\n    background: rgba(0, 0, 0, 0.5); }\n  .delete.is-small, .tag:not(.is-large) .delete {\n    height: 16px;\n    width: 16px; }\n    .delete.is-small:before, .tag:not(.is-large) .delete:before, .delete.is-small:after, .tag:not(.is-large) .delete:after {\n      left: 4px;\n      top: 7px;\n      width: 8px; }\n\n.icon {\n  display: inline-block;\n  font-size: 21px;\n  height: 24px;\n  line-height: 24px;\n  text-align: center;\n  vertical-align: top;\n  width: 24px; }\n  .icon .fa {\n    font-size: inherit;\n    line-height: inherit; }\n  .icon.is-small {\n    display: inline-block;\n    font-size: 14px;\n    height: 20px;\n    line-height: 20px;\n    text-align: center;\n    vertical-align: top;\n    width: 20px; }\n  .icon.is-medium {\n    display: inline-block;\n    font-size: 28px;\n    height: 32px;\n    line-height: 32px;\n    text-align: center;\n    vertical-align: top;\n    width: 32px; }\n  .icon.is-large {\n    display: inline-block;\n    font-size: 42px;\n    height: 48px;\n    line-height: 48px;\n    text-align: center;\n    vertical-align: top;\n    width: 48px; }\n\n.hamburger, .header-toggle {\n  cursor: pointer;\n  display: block;\n  height: 50px;\n  position: relative;\n  width: 50px; }\n  .hamburger span, .header-toggle span {\n    background: #69707a;\n    display: block;\n    height: 1px;\n    left: 50%;\n    margin-left: -7px;\n    position: absolute;\n    top: 50%;\n    transition: none 86ms ease-out;\n    transition-property: background, left, opacity, transform;\n    width: 15px; }\n    .hamburger span:nth-child(1), .header-toggle span:nth-child(1) {\n      margin-top: -6px; }\n    .hamburger span:nth-child(2), .header-toggle span:nth-child(2) {\n      margin-top: -1px; }\n    .hamburger span:nth-child(3), .header-toggle span:nth-child(3) {\n      margin-top: 4px; }\n  .hamburger:hover, .header-toggle:hover {\n    background: #f5f7fa; }\n  .hamburger.is-active span, .is-active.header-toggle span {\n    background: #1fc8db; }\n    .hamburger.is-active span:nth-child(1), .is-active.header-toggle span:nth-child(1) {\n      margin-left: -5px;\n      transform: rotate(45deg);\n      transform-origin: left top; }\n    .hamburger.is-active span:nth-child(2), .is-active.header-toggle span:nth-child(2) {\n      opacity: 0; }\n    .hamburger.is-active span:nth-child(3), .is-active.header-toggle span:nth-child(3) {\n      margin-left: -5px;\n      transform: rotate(-45deg);\n      transform-origin: left bottom; }\n  @media screen and (min-width: 769px) {\n    .hamburger, .header-toggle {\n      height: 50px;\n      width: 50px; } }\n\n.heading {\n  display: block;\n  font-size: 11px;\n  letter-spacing: 1px;\n  margin-bottom: 5px;\n  text-transform: uppercase; }\n\n.highlight {\n  font-size: 12px;\n  font-weight: normal;\n  max-width: 100%;\n  overflow: hidden;\n  padding: 0; }\n  .highlight:not(:last-child) {\n    margin-bottom: 20px; }\n  .highlight pre {\n    overflow: auto;\n    max-width: 100%; }\n\n.image {\n  display: block;\n  position: relative;\n  vertical-align: top; }\n  .image img {\n    bottom: 0;\n    left: 0;\n    position: absolute;\n    right: 0;\n    top: 0;\n    display: block;\n    width: 100%; }\n  .image.is-3x2 {\n    padding-top: 66.6666%; }\n\n.loader, .control.is-loading:after, .button.is-loading:after {\n  animation: spin-around 500ms infinite linear;\n  border: 2px solid #d3d6db;\n  border-radius: 290486px;\n  border-right-color: transparent;\n  border-top-color: transparent;\n  content: \"\";\n  display: block;\n  height: 16px;\n  position: relative;\n  width: 16px; }\n\n.number {\n  background: #f5f7fa;\n  border-radius: 290486px;\n  display: inline-block;\n  font-size: 18px;\n  vertical-align: top; }\n\n.tag {\n  background: #f5f7fa;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);\n  color: #69707a;\n  display: inline-block;\n  font-size: 12px;\n  height: 24px;\n  line-height: 16px;\n  padding: 4px 10px;\n  vertical-align: top;\n  white-space: nowrap; }\n  .tag.is-dark {\n    background: #69707a;\n    color: white; }\n  .tag.is-rounded {\n    border-radius: 290486px; }\n  .tag.is-medium {\n    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);\n    font-size: 14px;\n    height: 32px;\n    padding: 7px 14px 9px; }\n  .tag:not(.is-large) .delete {\n    margin-left: 4px;\n    margin-right: -6px; }\n  .tag.is-large {\n    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);\n    font-size: 18px;\n    height: 40px;\n    line-height: 24px;\n    padding: 7px 18px 9px; }\n    .tag.is-large .delete {\n      margin-left: 4px;\n      margin-right: -8px; }\n  .tag.is-dark {\n    background: #222324;\n    color: white; }\n  .tag.is-primary {\n    background: #1fc8db;\n    color: white; }\n  .tag.is-info {\n    background: #42afe3;\n    color: white; }\n  .tag.is-success {\n    background: #97cd76;\n    color: white; }\n  .tag.is-warning {\n    background: #fce473;\n    color: rgba(0, 0, 0, 0.5); }\n  .tag.is-danger {\n    background: #ed6c63;\n    color: white; }\n\n.column {\n  flex: 1;\n  padding: 10px; }\n  .columns.is-mobile > .column.is-half {\n    flex: none;\n    width: 50%; }\n  .columns.is-mobile > .column.is-third {\n    flex: none;\n    width: 33.3333%; }\n  .columns.is-mobile > .column.is-quarter {\n    flex: none;\n    width: 25%; }\n  .columns.is-mobile > .column.is-1-mobile {\n    flex: none;\n    width: 8.33333%; }\n  .columns.is-mobile > .column.is-2-mobile {\n    flex: none;\n    width: 16.66667%; }\n  .columns.is-mobile > .column.is-3-mobile {\n    flex: none;\n    width: 25%; }\n  .columns.is-mobile > .column.is-4-mobile {\n    flex: none;\n    width: 33.33333%; }\n  .columns.is-mobile > .column.is-5-mobile {\n    flex: none;\n    width: 41.66667%; }\n  .columns.is-mobile > .column.is-6-mobile {\n    flex: none;\n    width: 50%; }\n  .columns.is-mobile > .column.is-7-mobile {\n    flex: none;\n    width: 58.33333%; }\n  .columns.is-mobile > .column.is-8-mobile {\n    flex: none;\n    width: 66.66667%; }\n  .columns.is-mobile > .column.is-9-mobile {\n    flex: none;\n    width: 75%; }\n  .columns.is-mobile > .column.is-10-mobile {\n    flex: none;\n    width: 83.33333%; }\n  .columns.is-mobile > .column.is-11-mobile {\n    flex: none;\n    width: 91.66667%; }\n  @media screen and (max-width: 768px) {\n    .column.is-half-mobile {\n      flex: none;\n      width: 50%; }\n    .column.is-third-mobile {\n      flex: none;\n      width: 33.3333%; }\n    .column.is-quarter-mobile {\n      flex: none;\n      width: 25%; }\n    .column.is-1-mobile {\n      flex: none;\n      width: 8.33333%; }\n    .column.is-2-mobile {\n      flex: none;\n      width: 16.66667%; }\n    .column.is-3-mobile {\n      flex: none;\n      width: 25%; }\n    .column.is-4-mobile {\n      flex: none;\n      width: 33.33333%; }\n    .column.is-5-mobile {\n      flex: none;\n      width: 41.66667%; }\n    .column.is-6-mobile {\n      flex: none;\n      width: 50%; }\n    .column.is-7-mobile {\n      flex: none;\n      width: 58.33333%; }\n    .column.is-8-mobile {\n      flex: none;\n      width: 66.66667%; }\n    .column.is-9-mobile {\n      flex: none;\n      width: 75%; }\n    .column.is-10-mobile {\n      flex: none;\n      width: 83.33333%; }\n    .column.is-11-mobile {\n      flex: none;\n      width: 91.66667%; } }\n  @media screen and (min-width: 769px) {\n    .column.is-half, .column.is-half-tablet {\n      flex: none;\n      width: 50%; }\n    .column.is-third, .column.is-third-tablet {\n      flex: none;\n      width: 33.3333%; }\n    .column.is-quarter, .column.is-quarter-tablet {\n      flex: none;\n      width: 25%; }\n    .column.is-1, .column.is-1-tablet {\n      flex: none;\n      width: 8.33333%; }\n    .column.is-2, .column.is-2-tablet {\n      flex: none;\n      width: 16.66667%; }\n    .column.is-3, .column.is-3-tablet {\n      flex: none;\n      width: 25%; }\n    .column.is-4, .column.is-4-tablet {\n      flex: none;\n      width: 33.33333%; }\n    .column.is-5, .column.is-5-tablet {\n      flex: none;\n      width: 41.66667%; }\n    .column.is-6, .column.is-6-tablet {\n      flex: none;\n      width: 50%; }\n    .column.is-7, .column.is-7-tablet {\n      flex: none;\n      width: 58.33333%; }\n    .column.is-8, .column.is-8-tablet {\n      flex: none;\n      width: 66.66667%; }\n    .column.is-9, .column.is-9-tablet {\n      flex: none;\n      width: 75%; }\n    .column.is-10, .column.is-10-tablet {\n      flex: none;\n      width: 83.33333%; }\n    .column.is-11, .column.is-11-tablet {\n      flex: none;\n      width: 91.66667%; } }\n  @media screen and (min-width: 980px) {\n    .column.is-half-desktop {\n      flex: none;\n      width: 50%; }\n    .column.is-third-desktop {\n      flex: none;\n      width: 33.3333%; }\n    .column.is-quarter-desktop {\n      flex: none;\n      width: 25%; }\n    .column.is-1-desktop {\n      flex: none;\n      width: 8.33333%; }\n    .column.is-2-desktop {\n      flex: none;\n      width: 16.66667%; }\n    .column.is-3-desktop {\n      flex: none;\n      width: 25%; }\n    .column.is-4-desktop {\n      flex: none;\n      width: 33.33333%; }\n    .column.is-5-desktop {\n      flex: none;\n      width: 41.66667%; }\n    .column.is-6-desktop {\n      flex: none;\n      width: 50%; }\n    .column.is-7-desktop {\n      flex: none;\n      width: 58.33333%; }\n    .column.is-8-desktop {\n      flex: none;\n      width: 66.66667%; }\n    .column.is-9-desktop {\n      flex: none;\n      width: 75%; }\n    .column.is-10-desktop {\n      flex: none;\n      width: 83.33333%; }\n    .column.is-11-desktop {\n      flex: none;\n      width: 91.66667%; } }\n\n.columns {\n  margin-left: -10px;\n  margin-right: -10px;\n  margin-top: -10px; }\n  .columns:last-child {\n    margin-bottom: -10px; }\n  .columns:not(:last-child) {\n    margin-bottom: 10px; }\n  .columns.is-mobile {\n    display: flex; }\n  @media screen and (min-width: 769px) {\n    .columns:not(.is-desktop) {\n      display: flex; } }\n  @media screen and (min-width: 980px) {\n    .columns.is-desktop {\n      display: flex; } }\n  .columns.is-gapless:not(:last-child) {\n    margin: 0 0 20px; }\n  .columns.is-gapless > .column {\n    margin: 0;\n    padding: 0; }\n  .columns.is-multiline {\n    flex-wrap: wrap; }\n  .columns.is-vcentered {\n    align-items: center; }\n  @media screen and (min-width: 769px) {\n    .columns.is-grid {\n      flex-wrap: wrap; }\n      .columns.is-grid > .column {\n        flex-basis: 33.3333%;\n        max-width: 33.3333%;\n        padding: 10px;\n        width: 33.3333%; }\n        .columns.is-grid > .column + .column {\n          margin-left: 0; } }\n\n.navbar-item .title,\n.navbar-item .subtitle {\n  margin-bottom: 0; }\n\n@media screen and (max-width: 768px) {\n  .navbar-item:not(:last-child) {\n    margin-bottom: 10px; } }\n\n.navbar:not(:last-child) {\n  margin-bottom: 20px; }\n\n.navbar code {\n  border-radius: 3px; }\n\n.navbar img {\n  display: inline-block;\n  vertical-align: top; }\n\n@media screen and (min-width: 769px) {\n  .navbar {\n    align-items: center;\n    display: flex;\n    justify-content: space-between; }\n    .navbar > .navbar-item:not(.is-narrow) {\n      flex: 1; } }\n\n.navbar-left .navbar-item.is-flexible,\n.navbar-right .navbar-item.is-flexible {\n  flex: 1; }\n\n.navbar-left .navbar-item:not(:last-child),\n.navbar-right .navbar-item:not(:last-child) {\n  margin-right: 10px; }\n\n@media screen and (max-width: 768px) {\n  .navbar-left + .navbar-right {\n    margin-top: 20px; } }\n\n@media screen and (min-width: 769px) {\n  .navbar-left {\n    align-items: center;\n    display: flex; } }\n\n@media screen and (min-width: 769px) {\n  .navbar-right {\n    align-items: center;\n    display: flex;\n    justify-content: flex-end; } }\n\n.card-image {\n  display: block;\n  position: relative; }\n  .card-image img {\n    display: block; }\n  .card-image.is-square img, .card-image.is-4x3 img, .card-image.is-3x2 img {\n    bottom: 0;\n    left: 0;\n    position: absolute;\n    right: 0;\n    top: 0;\n    height: 100%;\n    width: 100%; }\n  .card-image.is-square {\n    padding-top: 100%; }\n  .card-image.is-4x3 {\n    padding-top: 75%; }\n  .card-image.is-3x2 {\n    padding-top: 66.6666%; }\n\n.card-content {\n  padding: 20px; }\n  .card-content .title + .subtitle {\n    margin-top: -20px; }\n\n.card-footer {\n  background: #f5f7fa;\n  display: block;\n  padding: 10px; }\n\n.card {\n  background: white;\n  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);\n  max-width: 100%;\n  position: relative;\n  width: 300px; }\n  .card .media:not(:last-child) {\n    margin-bottom: 10px; }\n  .card.is-rounded {\n    border-radius: 5px; }\n\n.table {\n  background: white;\n  color: #222324;\n  margin-bottom: 20px;\n  width: 100%; }\n  .table th,\n  .table td {\n    border: 1px solid #d3d6db;\n    border-width: 0 0 1px;\n    padding: 8px 10px;\n    vertical-align: top; }\n    .table th.table-link,\n    .table td.table-link {\n      padding: 0; }\n      .table th.table-link > a,\n      .table td.table-link > a {\n        display: block;\n        padding: 8px 10px; }\n        .table th.table-link > a:hover,\n        .table td.table-link > a:hover {\n          background: #1fc8db;\n          color: white; }\n    .table th.table-icon,\n    .table td.table-icon {\n      padding: 5px;\n      text-align: center;\n      white-space: nowrap;\n      width: 1%; }\n      .table th.table-icon .fa,\n      .table td.table-icon .fa {\n        display: inline-block;\n        font-size: 21px;\n        height: 24px;\n        line-height: 24px;\n        text-align: center;\n        vertical-align: top;\n        width: 24px; }\n      .table th.table-icon.table-link,\n      .table td.table-icon.table-link {\n        padding: 0; }\n        .table th.table-icon.table-link > a,\n        .table td.table-icon.table-link > a {\n          padding: 5px; }\n  .table th {\n    color: #222324;\n    text-align: left; }\n  .table tr:hover {\n    background: rgba(245, 247, 250, 0.5);\n    color: #222324; }\n  .table tr:last-child td {\n    border-bottom-width: 0; }\n  .table thead th,\n  .table thead td {\n    border-width: 0 0 2px;\n    color: #aeb1b5; }\n  .table tfoot th,\n  .table tfoot td {\n    border-width: 2px 0 0;\n    color: #aeb1b5; }\n  .table.is-bordered th,\n  .table.is-bordered td {\n    border-width: 1px; }\n  .table.is-bordered tr:last-child td {\n    border-bottom-width: 1px; }\n  .table.is-narrow th,\n  .table.is-narrow td {\n    padding: 5px 10px; }\n    .table.is-narrow th.table-link,\n    .table.is-narrow td.table-link {\n      padding: 0; }\n      .table.is-narrow th.table-link > a,\n      .table.is-narrow td.table-link > a {\n        padding: 5px 10px; }\n    .table.is-narrow th.table-icon,\n    .table.is-narrow td.table-icon {\n      padding: 2px; }\n      .table.is-narrow th.table-icon.table-link,\n      .table.is-narrow td.table-icon.table-link {\n        padding: 0; }\n        .table.is-narrow th.table-icon.table-link > a,\n        .table.is-narrow td.table-icon.table-link > a {\n          padding: 2px; }\n  .table.is-striped tbody tr:nth-child(2n) {\n    background: rgba(245, 247, 250, 0.5); }\n    .table.is-striped tbody tr:nth-child(2n):hover {\n      background: #f5f7fa; }\n\n.tabs {\n  line-height: 24px;\n  overflow: hidden;\n  overflow-x: auto;\n  white-space: nowrap; }\n  .tabs:not(:last-child) {\n    margin-bottom: 20px; }\n  .tabs .fa {\n    font-size: 14px;\n    line-height: 20px;\n    margin: 2px -2px;\n    width: 20px; }\n  .tabs a {\n    border-bottom: 1px solid #d3d6db;\n    color: #69707a;\n    display: block;\n    margin-bottom: -1px;\n    padding: 5px 0;\n    vertical-align: top; }\n    .tabs a:hover {\n      border-bottom-color: #222324;\n      color: #222324; }\n  .tabs li {\n    display: block;\n    vertical-align: top; }\n    .tabs li + li {\n      margin-left: 20px; }\n    .tabs li.is-active a {\n      border-bottom-color: #1fc8db;\n      color: #1fc8db; }\n  .tabs ul {\n    border-bottom: 1px solid #d3d6db;\n    display: flex; }\n  .tabs.is-centered a {\n    padding: 5px 10px; }\n  .tabs.is-centered li + li {\n    margin-left: 0; }\n  .tabs.is-centered ul {\n    justify-content: center;\n    text-align: center; }\n  .tabs.is-right ul {\n    justify-content: flex-end; }\n  .tabs.is-boxed a {\n    border: 1px solid transparent;\n    border-radius: 3px 3px 0 0;\n    padding: 5px 15px; }\n    .tabs.is-boxed a:hover {\n      background: #f5f7fa;\n      border-bottom-color: #d3d6db; }\n  .tabs.is-boxed li + li {\n    margin-left: 5px; }\n  .tabs.is-boxed li.is-active a {\n    background: white;\n    border-color: #d3d6db;\n    border-bottom-color: transparent; }\n  .tabs.is-boxed.is-centered li,\n  .tabs.is-boxed.is-centered li + li {\n    margin: 0 2px; }\n  .tabs.is-toggle a {\n    border: 1px solid #d3d6db;\n    margin-bottom: 0;\n    padding: 5px 10px;\n    position: relative; }\n    .tabs.is-toggle a:hover {\n      background: #f5f7fa;\n      border-color: #aeb1b5;\n      z-index: 2; }\n  .tabs.is-toggle li + li {\n    margin-left: -1px; }\n  .tabs.is-toggle li:first-child a {\n    border-radius: 3px 0 0 3px; }\n  .tabs.is-toggle li:last-child a {\n    border-radius: 0 3px 3px 0; }\n  .tabs.is-toggle li.is-active a {\n    background: #1fc8db;\n    border-color: #1fc8db;\n    color: white;\n    z-index: 1; }\n  .tabs.is-toggle ul {\n    border-bottom: none; }\n  @media screen and (min-width: 769px) {\n    .tabs.is-fullwidth li {\n      flex: 1; }\n      .tabs.is-fullwidth li + li {\n        margin-left: 0; }\n    .tabs.is-fullwidth ul {\n      justify-content: center;\n      text-align: center; } }\n\n.media-image.is-32 {\n  width: 32px; }\n\n.media-image.is-40 {\n  width: 40px; }\n\n@media screen and (max-width: 768px) {\n  .media-image {\n    margin-bottom: 10px; } }\n\n@media screen and (min-width: 769px) {\n  .media-image {\n    margin-right: 10px;\n    width: 60px; } }\n\n.media-number {\n  background: #f5f7fa;\n  border-radius: 290486px;\n  display: inline-block;\n  font-size: 18px;\n  height: 32px;\n  line-height: 24px;\n  min-width: 32px;\n  padding: 4px 8px;\n  text-align: center;\n  vertical-align: top; }\n  @media screen and (max-width: 768px) {\n    .media-number {\n      margin-bottom: 10px; } }\n  @media screen and (min-width: 769px) {\n    .media-number {\n      margin-right: 10px; } }\n\n@media screen and (max-width: 768px) {\n  .media-left {\n    margin-bottom: 20px; } }\n\n@media screen and (min-width: 769px) {\n  .media-left {\n    margin-right: 20px; } }\n\n@media screen and (max-width: 768px) {\n  .media-right {\n    margin-top: 20px; } }\n\n@media screen and (min-width: 769px) {\n  .media-right {\n    margin-left: 20px; } }\n\n.media-content {\n  flex: 1;\n  text-align: left; }\n  .media-content .textarea {\n    min-height: 60px; }\n\n.media {\n  align-items: flex-start;\n  text-align: left; }\n  .media .content:not(:last-child) {\n    margin-bottom: 10px; }\n  .media .media {\n    border-top: 1px solid rgba(211, 214, 219, 0.5);\n    display: flex;\n    padding-top: 10px; }\n    .media .media .media-image {\n      margin-bottom: 0;\n      margin-right: 10px;\n      width: 40px; }\n    .media .media .textarea {\n      border-radius: 2px;\n      font-size: 11px;\n      height: 24px;\n      line-height: 16px;\n      padding: 3px 6px; }\n    .media .media .button {\n      border-radius: 2px;\n      font-size: 11px;\n      height: 24px;\n      line-height: 16px;\n      padding: 3px 6px; }\n    .media .media .content:not(:last-child),\n    .media .media .control:not(:last-child) {\n      margin-bottom: 5px; }\n    .media .media .media {\n      font-size: 12px;\n      padding-top: 5px; }\n      .media .media .media + .media {\n        margin-top: 5px; }\n  .media + .media {\n    border-top: 1px solid rgba(211, 214, 219, 0.5);\n    margin-top: 10px;\n    padding-top: 10px; }\n  .media.is-large + .media {\n    margin-top: 20px;\n    padding-top: 20px; }\n  @media screen and (min-width: 769px) {\n    .media {\n      display: flex; }\n      .media.is-large .media-number {\n        margin-right: 20px; } }\n\n.menu-icon {\n  display: inline-block;\n  font-size: 14px;\n  height: 16px;\n  line-height: 16px;\n  text-align: center;\n  vertical-align: top;\n  width: 16px;\n  color: #aeb1b5;\n  float: left;\n  margin: 0 4px 0 -2px; }\n  .menu-icon .fa {\n    font-size: inherit;\n    line-height: inherit; }\n\n.menu-heading {\n  background: #f5f7fa;\n  border-bottom: 1px solid #d3d6db;\n  border-radius: 4px 4px 0 0;\n  color: #222324;\n  font-size: 18px;\n  font-weight: 300;\n  padding: 10px; }\n\n.menu-list a {\n  color: #69707a; }\n  .menu-list a:hover {\n    color: #1fc8db; }\n\n.menu-tabs {\n  display: flex;\n  font-size: 11px;\n  padding: 5px 10px 0;\n  justify-content: center; }\n  .menu-tabs:not(:last-child) {\n    border-bottom: 1px solid #d3d6db; }\n  .menu-tabs a {\n    border-bottom: 1px solid #d3d6db;\n    margin-bottom: -1px;\n    padding: 5px; }\n    .menu-tabs a.is-active {\n      border-bottom-color: #222324;\n      color: #222324; }\n\n.menu-block {\n  color: #222324;\n  display: block;\n  line-height: 16px;\n  padding: 10px; }\n  .menu-block:not(:last-child) {\n    border-bottom: 1px solid #d3d6db; }\n  .menu-block .checkbox, .menu-block .menu-checkbox {\n    border: 1px solid transparent;\n    border-radius: 3px;\n    display: block;\n    padding: 8px;\n    padding-left: 32px; }\n    .menu-block .checkbox input, .menu-block .menu-checkbox input {\n      left: 9px;\n      top: 9px; }\n    .menu-block .checkbox:hover, .menu-block .menu-checkbox:hover {\n      border-color: #1fc8db; }\n\na.menu-block:hover {\n  background: #f5f7fa; }\n\n.menu-checkbox {\n  display: block;\n  padding: 9px 10px 9px 30px; }\n  .menu-checkbox:not(:last-child) {\n    border-bottom: 1px solid #d3d6db; }\n  .menu-checkbox input {\n    left: 8px;\n    top: 10px; }\n\n.menu {\n  border: 1px solid #d3d6db;\n  border-radius: 5px; }\n  .menu:not(:last-child) {\n    margin-bottom: 20px; }\n\n.block:not(:last-child) {\n  margin-bottom: 20px; }\n\n.header {\n  background: white;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);\n  display: flex;\n  height: 50px;\n  line-height: 24px;\n  position: relative;\n  text-align: center;\n  z-index: 2; }\n  .header:after {\n    clear: both;\n    content: \" \";\n    display: table; }\n  .header .container {\n    align-items: stretch;\n    box-shadow: 0 1px 0 rgba(211, 214, 219, 0.3);\n    display: flex;\n    width: 100%; }\n  @media screen and (min-width: 769px) {\n    .header {\n      height: 50px; } }\n\n@media screen and (min-width: 769px) {\n  .header-toggle {\n    display: none; } }\n\n.header-item {\n  align-items: center;\n  display: flex;\n  padding: 10px; }\n  .header-item img {\n    max-height: 24px; }\n  .header-item a {\n    color: #69707a; }\n    .header-item a:hover {\n      color: #222324; }\n    .header-item a.is-active {\n      color: #222324; }\n  .header-item .fa {\n    font-size: 21px;\n    line-height: 24px; }\n\n.header-icon {\n  display: inline-block;\n  font-size: 14px;\n  height: 24px;\n  line-height: 24px;\n  text-align: center;\n  vertical-align: top;\n  width: 24px;\n  color: #69707a;\n  margin: 0 5px; }\n  .header-icon:hover {\n    color: #222324; }\n\n.header-tab {\n  align-items: center;\n  border-bottom: 1px solid transparent;\n  color: #69707a;\n  display: block;\n  height: 50px;\n  line-height: 24px;\n  padding: 13px 15px; }\n  .header-tab:hover {\n    border-bottom: 1px solid #1fc8db; }\n  .header-tab.is-active {\n    border-bottom: 3px solid #1fc8db;\n    color: #1fc8db; }\n\n.header-left {\n  align-items: stretch;\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  overflow-x: auto;\n  white-space: nowrap; }\n  @media screen and (min-width: 980px) {\n    .header-left .header-item:first-child {\n      padding-left: 0; } }\n\n.header-center {\n  align-items: stretch;\n  display: flex;\n  left: 50%;\n  position: absolute;\n  transform: translateX(-50%); }\n\n.header-right {\n  align-items: stretch; }\n  @media screen and (min-width: 769px) {\n    .header-right {\n      display: flex; } }\n  @media screen and (min-width: 980px) {\n    .header-right .header-item:last-child {\n      padding-right: 0; } }\n\n.header-full {\n  align-items: stretch;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n  width: 100%; }\n  .header-full > .header-item {\n    align-items: stretch;\n    display: flex;\n    flex: 1;\n    justify-content: center;\n    padding: 0; }\n    .header-full > .header-item > a {\n      align-items: center;\n      display: flex;\n      justify-content: center;\n      width: 100%; }\n\n@media screen and (max-width: 768px) {\n  .header-menu {\n    background: white;\n    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);\n    display: none;\n    min-width: 120px;\n    position: absolute;\n    right: 0;\n    top: 50px;\n    z-index: 100; }\n    .header-menu .header-item {\n      border-top: 1px solid rgba(211, 214, 219, 0.5);\n      padding: 10px; }\n    .header-menu.is-active {\n      display: block; } }\n\n.header.is-centered {\n  justify-content: center; }\n  .header.is-centered .header-left,\n  .header.is-centered .header-center,\n  .header.is-centered .header-right {\n    justify-content: center; }\n\n.header.is-small {\n  background: #f5f7fa;\n  box-shadow: none;\n  height: 40px;\n  z-index: 1; }\n  .header.is-small .container {\n    height: 40px; }\n  .header.is-small .header-tab {\n    font-size: 13px;\n    height: 40px;\n    padding: 8px 10px; }\n    .header.is-small .header-tab:hover, .header.is-small .header-tab.is-active {\n      border-bottom-width: 2px; }\n\n.hero-video {\n  bottom: 0;\n  left: 0;\n  position: absolute;\n  right: 0;\n  top: 0;\n  overflow: hidden; }\n  .hero-video.is-transparent {\n    opacity: 0.3; }\n  .hero-video video {\n    left: 50%;\n    min-height: 100%;\n    min-width: 100%;\n    position: absolute;\n    top: 50%;\n    transform: translate3d(-50%, -50%, 0); }\n  @media screen and (max-width: 768px) {\n    .hero-video {\n      display: none; } }\n\n.hero-content {\n  padding: 40px 20px; }\n  @media screen and (min-width: 980px) {\n    .hero-content {\n      padding: 40px 0; } }\n\n.hero-buttons {\n  margin-top: 20px; }\n  @media screen and (max-width: 768px) {\n    .hero-buttons .button {\n      display: block; }\n      .hero-buttons .button:not(:last-child) {\n        margin-bottom: 10px; } }\n  @media screen and (min-width: 769px) {\n    .hero-buttons {\n      display: flex;\n      justify-content: center; }\n      .hero-buttons .button:not(:last-child) {\n        margin-right: 20px; } }\n\n.hero {\n  background: white;\n  text-align: center; }\n  .hero .header {\n    background: none;\n    box-shadow: none; }\n  .hero .tabs a {\n    border: none; }\n  .hero .tabs ul {\n    border-bottom: none; }\n  .hero.is-alt {\n    background: #f5f7fa;\n    color: #aeb1b5; }\n  .hero.is-dark {\n    background: #222324;\n    color: white; }\n    .hero.is-dark .title {\n      color: white; }\n      .hero.is-dark .title a,\n      .hero.is-dark .title strong {\n        color: inherit; }\n    .hero.is-dark .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-dark .subtitle strong {\n        color: white; }\n    .hero.is-dark .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-dark .header-icon,\n    .hero.is-dark .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-dark .header-icon:hover, .hero.is-dark .header-icon.is-active,\n      .hero.is-dark .header-item > a:not(.button):hover,\n      .hero.is-dark .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-dark .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-dark .tabs a:hover {\n        opacity: 1; }\n    .hero.is-dark .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-dark .tabs.is-boxed a, .hero.is-dark .tabs.is-toggle a {\n      color: white; }\n      .hero.is-dark .tabs.is-boxed a:hover, .hero.is-dark .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-dark .tabs.is-boxed li.is-active a, .hero.is-dark .tabs.is-boxed li.is-active a:hover, .hero.is-dark .tabs.is-toggle li.is-active a, .hero.is-dark .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #222324; }\n    .hero.is-dark.is-bold {\n      background-image: linear-gradient(141deg, #080a0b 0%, #222324 71%, #2c2e34 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-dark .header-toggle span {\n        background: white; }\n      .hero.is-dark .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-dark .header-toggle.is-active span {\n        background: white; }\n      .hero.is-dark .header-menu {\n        background: #222324; }\n        .hero.is-dark .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  .hero.is-primary {\n    background: #1fc8db;\n    color: white; }\n    .hero.is-primary .title {\n      color: white; }\n      .hero.is-primary .title a,\n      .hero.is-primary .title strong {\n        color: inherit; }\n    .hero.is-primary .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-primary .subtitle strong {\n        color: white; }\n    .hero.is-primary .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-primary .header-icon,\n    .hero.is-primary .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-primary .header-icon:hover, .hero.is-primary .header-icon.is-active,\n      .hero.is-primary .header-item > a:not(.button):hover,\n      .hero.is-primary .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-primary .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-primary .tabs a:hover {\n        opacity: 1; }\n    .hero.is-primary .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-primary .tabs.is-boxed a, .hero.is-primary .tabs.is-toggle a {\n      color: white; }\n      .hero.is-primary .tabs.is-boxed a:hover, .hero.is-primary .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-primary .tabs.is-boxed li.is-active a, .hero.is-primary .tabs.is-boxed li.is-active a:hover, .hero.is-primary .tabs.is-toggle li.is-active a, .hero.is-primary .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #1fc8db; }\n    .hero.is-primary.is-bold {\n      background-image: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 71%, #2cb5e8 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-primary .header-toggle span {\n        background: white; }\n      .hero.is-primary .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-primary .header-toggle.is-active span {\n        background: white; }\n      .hero.is-primary .header-menu {\n        background: #1fc8db; }\n        .hero.is-primary .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  .hero.is-info {\n    background: #42afe3;\n    color: white; }\n    .hero.is-info .title {\n      color: white; }\n      .hero.is-info .title a,\n      .hero.is-info .title strong {\n        color: inherit; }\n    .hero.is-info .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-info .subtitle strong {\n        color: white; }\n    .hero.is-info .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-info .header-icon,\n    .hero.is-info .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-info .header-icon:hover, .hero.is-info .header-icon.is-active,\n      .hero.is-info .header-item > a:not(.button):hover,\n      .hero.is-info .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-info .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-info .tabs a:hover {\n        opacity: 1; }\n    .hero.is-info .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-info .tabs.is-boxed a, .hero.is-info .tabs.is-toggle a {\n      color: white; }\n      .hero.is-info .tabs.is-boxed a:hover, .hero.is-info .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-info .tabs.is-boxed li.is-active a, .hero.is-info .tabs.is-boxed li.is-active a:hover, .hero.is-info .tabs.is-toggle li.is-active a, .hero.is-info .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #42afe3; }\n    .hero.is-info.is-bold {\n      background-image: linear-gradient(141deg, #13bfdf 0%, #42afe3 71%, #53a1eb 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-info .header-toggle span {\n        background: white; }\n      .hero.is-info .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-info .header-toggle.is-active span {\n        background: white; }\n      .hero.is-info .header-menu {\n        background: #42afe3; }\n        .hero.is-info .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  .hero.is-success {\n    background: #97cd76;\n    color: white; }\n    .hero.is-success .title {\n      color: white; }\n      .hero.is-success .title a,\n      .hero.is-success .title strong {\n        color: inherit; }\n    .hero.is-success .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-success .subtitle strong {\n        color: white; }\n    .hero.is-success .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-success .header-icon,\n    .hero.is-success .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-success .header-icon:hover, .hero.is-success .header-icon.is-active,\n      .hero.is-success .header-item > a:not(.button):hover,\n      .hero.is-success .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-success .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-success .tabs a:hover {\n        opacity: 1; }\n    .hero.is-success .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-success .tabs.is-boxed a, .hero.is-success .tabs.is-toggle a {\n      color: white; }\n      .hero.is-success .tabs.is-boxed a:hover, .hero.is-success .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-success .tabs.is-boxed li.is-active a, .hero.is-success .tabs.is-boxed li.is-active a:hover, .hero.is-success .tabs.is-toggle li.is-active a, .hero.is-success .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #97cd76; }\n    .hero.is-success.is-bold {\n      background-image: linear-gradient(141deg, #8ecb45 0%, #97cd76 71%, #96d885 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-success .header-toggle span {\n        background: white; }\n      .hero.is-success .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-success .header-toggle.is-active span {\n        background: white; }\n      .hero.is-success .header-menu {\n        background: #97cd76; }\n        .hero.is-success .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  .hero.is-warning {\n    background: #fce473;\n    color: rgba(0, 0, 0, 0.5); }\n    .hero.is-warning .title {\n      color: rgba(0, 0, 0, 0.5); }\n      .hero.is-warning .title a,\n      .hero.is-warning .title strong {\n        color: inherit; }\n    .hero.is-warning .subtitle {\n      color: rgba(0, 0, 0, 0.7); }\n      .hero.is-warning .subtitle strong {\n        color: rgba(0, 0, 0, 0.5); }\n    .hero.is-warning .header .container {\n      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2); }\n    .hero.is-warning .header-icon,\n    .hero.is-warning .header-item > a:not(.button) {\n      color: rgba(0, 0, 0, 0.5);\n      opacity: 0.5; }\n      .hero.is-warning .header-icon:hover, .hero.is-warning .header-icon.is-active,\n      .hero.is-warning .header-item > a:not(.button):hover,\n      .hero.is-warning .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-warning .tabs a {\n      color: rgba(0, 0, 0, 0.5);\n      opacity: 0.5; }\n      .hero.is-warning .tabs a:hover {\n        opacity: 1; }\n    .hero.is-warning .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-warning .tabs.is-boxed a, .hero.is-warning .tabs.is-toggle a {\n      color: rgba(0, 0, 0, 0.5); }\n      .hero.is-warning .tabs.is-boxed a:hover, .hero.is-warning .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-warning .tabs.is-boxed li.is-active a, .hero.is-warning .tabs.is-boxed li.is-active a:hover, .hero.is-warning .tabs.is-toggle li.is-active a, .hero.is-warning .tabs.is-toggle li.is-active a:hover {\n      background: rgba(0, 0, 0, 0.5);\n      color: #fce473; }\n    .hero.is-warning.is-bold {\n      background-image: linear-gradient(141deg, #ffbd3d 0%, #fce473 71%, #fffe8a 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-warning .header-toggle span {\n        background: rgba(0, 0, 0, 0.5); }\n      .hero.is-warning .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-warning .header-toggle.is-active span {\n        background: rgba(0, 0, 0, 0.5); }\n      .hero.is-warning .header-menu {\n        background: #fce473; }\n        .hero.is-warning .header-menu .header-item {\n          border-top-color: rgba(0, 0, 0, 0.2); } }\n  .hero.is-danger {\n    background: #ed6c63;\n    color: white; }\n    .hero.is-danger .title {\n      color: white; }\n      .hero.is-danger .title a,\n      .hero.is-danger .title strong {\n        color: inherit; }\n    .hero.is-danger .subtitle {\n      color: rgba(255, 255, 255, 0.7); }\n      .hero.is-danger .subtitle strong {\n        color: white; }\n    .hero.is-danger .header .container {\n      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2); }\n    .hero.is-danger .header-icon,\n    .hero.is-danger .header-item > a:not(.button) {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-danger .header-icon:hover, .hero.is-danger .header-icon.is-active,\n      .hero.is-danger .header-item > a:not(.button):hover,\n      .hero.is-danger .header-item > a:not(.button).is-active {\n        opacity: 1; }\n    .hero.is-danger .tabs a {\n      color: white;\n      opacity: 0.5; }\n      .hero.is-danger .tabs a:hover {\n        opacity: 1; }\n    .hero.is-danger .tabs li.is-active a {\n      opacity: 1; }\n    .hero.is-danger .tabs.is-boxed a, .hero.is-danger .tabs.is-toggle a {\n      color: white; }\n      .hero.is-danger .tabs.is-boxed a:hover, .hero.is-danger .tabs.is-toggle a:hover {\n        background: rgba(0, 0, 0, 0.1); }\n    .hero.is-danger .tabs.is-boxed li.is-active a, .hero.is-danger .tabs.is-boxed li.is-active a:hover, .hero.is-danger .tabs.is-toggle li.is-active a, .hero.is-danger .tabs.is-toggle li.is-active a:hover {\n      background: white;\n      color: #ed6c63; }\n    .hero.is-danger.is-bold {\n      background-image: linear-gradient(141deg, #f32a3e 0%, #ed6c63 71%, #f39376 100%); }\n    @media screen and (max-width: 768px) {\n      .hero.is-danger .header-toggle span {\n        background: white; }\n      .hero.is-danger .header-toggle:hover {\n        background: rgba(0, 0, 0, 0.1); }\n      .hero.is-danger .header-toggle.is-active span {\n        background: white; }\n      .hero.is-danger .header-menu {\n        background: #ed6c63; }\n        .hero.is-danger .header-menu .header-item {\n          border-top-color: rgba(255, 255, 255, 0.2); } }\n  @media screen and (min-width: 769px) {\n    .hero.is-fullheight .tabs, .hero.is-large .tabs {\n      font-size: 18px; } }\n  @media screen and (min-width: 769px) {\n    .hero.is-medium .hero-content {\n      padding: 120px 20px; } }\n  @media screen and (min-width: 980px) {\n    .hero.is-medium .hero-content {\n      padding: 120px 0; } }\n  .hero.is-large .tabs a {\n    padding: 10px 15px; }\n  @media screen and (min-width: 769px) {\n    .hero.is-large .hero-content {\n      padding: 240px 20px; } }\n  @media screen and (min-width: 980px) {\n    .hero.is-large .hero-content {\n      padding: 240px 0; } }\n  .hero.is-fullheight {\n    align-items: stretch;\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    min-height: 100vh; }\n    .hero.is-fullheight .tabs a {\n      padding: 15px 20px; }\n    .hero.is-fullheight .hero-content {\n      display: flex;\n      flex: 1;\n      flex-direction: column;\n      justify-content: center; }\n  .hero.is-left {\n    text-align: left; }\n  .hero.is-right {\n    text-align: right; }\n\n.section {\n  background: white;\n  padding: 40px 20px; }\n  .section + .section {\n    border-top: 1px solid rgba(211, 214, 219, 0.5); }\n  @media screen and (min-width: 980px) {\n    .section {\n      padding: 40px 0; }\n      .section.is-medium {\n        padding: 120px 0; }\n      .section.is-large {\n        padding: 240px 0; } }\n\n.footer {\n  background: #f5f7fa;\n  padding: 40px 20px 80px; }\n  .footer a {\n    color: #69707a; }\n    .footer a:hover {\n      color: #222324; }\n    .footer a:not(.icon) {\n      border-bottom: 1px solid #d3d6db; }\n      .footer a:not(.icon):hover {\n        border-bottom-color: #1fc8db; }\n\n#main {\n  margin-top: 20px;\n  margin-left: 20px; }\n\nlabel {\n  display: block; }\n\n.notes li {\n  margin: 6px;\n  display: inline-block; }\n\n.tag-info {\n  border: 1px solid #69707a;\n  padding: 10px; }\n\n.tags li {\n  margin: 0 5px;\n  display: inline-block; }\n\n.hidden {\n  display: none !important; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 336 */
+/* 338 */
 /***/ function(module, exports) {
 
 	/*
@@ -36816,7 +37204,7 @@
 
 
 /***/ },
-/* 337 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -37066,6 +37454,404 @@
 
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 340 */,
+/* 341 */,
+/* 342 */,
+/* 343 */,
+/* 344 */,
+/* 345 */,
+/* 346 */,
+/* 347 */,
+/* 348 */,
+/* 349 */,
+/* 350 */,
+/* 351 */,
+/* 352 */,
+/* 353 */,
+/* 354 */,
+/* 355 */,
+/* 356 */,
+/* 357 */,
+/* 358 */,
+/* 359 */,
+/* 360 */,
+/* 361 */,
+/* 362 */,
+/* 363 */,
+/* 364 */,
+/* 365 */,
+/* 366 */,
+/* 367 */,
+/* 368 */,
+/* 369 */,
+/* 370 */,
+/* 371 */,
+/* 372 */,
+/* 373 */,
+/* 374 */,
+/* 375 */,
+/* 376 */,
+/* 377 */,
+/* 378 */,
+/* 379 */,
+/* 380 */,
+/* 381 */,
+/* 382 */,
+/* 383 */,
+/* 384 */,
+/* 385 */,
+/* 386 */,
+/* 387 */,
+/* 388 */,
+/* 389 */,
+/* 390 */,
+/* 391 */,
+/* 392 */,
+/* 393 */,
+/* 394 */,
+/* 395 */,
+/* 396 */,
+/* 397 */,
+/* 398 */,
+/* 399 */,
+/* 400 */,
+/* 401 */,
+/* 402 */,
+/* 403 */,
+/* 404 */,
+/* 405 */,
+/* 406 */,
+/* 407 */,
+/* 408 */,
+/* 409 */,
+/* 410 */,
+/* 411 */,
+/* 412 */,
+/* 413 */,
+/* 414 */,
+/* 415 */,
+/* 416 */,
+/* 417 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(160);
+
+	var _reactCookie = __webpack_require__(418);
+
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+
+	var _store = __webpack_require__(219);
+
+	var _store2 = _interopRequireDefault(_store);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var store = new _store2.default();
+
+	var Logout = function (_Component) {
+	  _inherits(Logout, _Component);
+
+	  function Logout(props) {
+	    _classCallCheck(this, Logout);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Logout).call(this, props));
+
+	    store.signOut();
+	    _reactCookie2.default.remove('username');
+	    _this.props.history.push('/login');
+	    return _this;
+	  }
+
+	  _createClass(Logout, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('div', null);
+	    }
+	  }]);
+
+	  return Logout;
+	}(_react.Component);
+
+	exports.default = Logout;
+
+/***/ },
+/* 418 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var cookie = __webpack_require__(419);
+
+	var _rawCookie = {};
+	var _res = undefined;
+
+	function load(name, doNotParse) {
+	  var cookies = (typeof document === 'undefined') ? _rawCookie : cookie.parse(document.cookie);
+	  var cookieVal = cookies && cookies[name];
+
+	  if (!doNotParse) {
+	    try {
+	      cookieVal = JSON.parse(cookieVal);
+	    } catch(e) {
+	      // Not serialized object
+	    }
+	  }
+
+	  return cookieVal;
+	}
+
+	function save(name, val, opt) {
+	  _rawCookie[name] = val;
+
+	  // allow you to work with cookies as objects.
+	  if (typeof val === 'object') {
+	    _rawCookie[name] = JSON.stringify(val);
+	  }
+
+	  // Cookies only work in the browser
+	  if (typeof document !== 'undefined') {
+	    document.cookie = cookie.serialize(name, _rawCookie[name], opt);
+	  }
+
+	  if (_res && _res.cookie) {
+	    _res.cookie(name, val, opt);
+	  }
+	}
+
+	function remove(name, opt) {
+	  delete _rawCookie[name];
+
+	  if (typeof opt === 'undefined') {
+	    opt = {};
+	  } else if (typeof opt === 'string') {
+	    // Will be deprecated in future versions
+	    opt = { path: opt };
+	  }
+
+	  if (typeof document !== 'undefined') {
+	    opt.expires = new Date(1970, 1, 1, 0, 0, 1);
+	    document.cookie = cookie.serialize(name, '', opt);
+	  }
+
+	  if (_res && _res.clearCookie) {
+	    _res.clearCookie(name, opt);
+	  }
+	}
+
+	function setRawCookie(rawCookie) {
+	  if (rawCookie) {
+	    _rawCookie = cookie.parse(rawCookie);
+	  } else {
+	    _rawCookie = {};
+	  }
+	}
+
+	function plugToRequest(req, res) {
+	  if (req.cookie) {
+	    _rawCookie = req.cookie;
+	  } else if (req.headers && req.headers.cookie) {
+	    setRawCookie(req.headers.cookie);
+	  } else {
+	    _rawCookie = {};
+	  }
+
+	  _res = res;
+	}
+
+	var reactCookie = {
+	  load: load,
+	  save: save,
+	  remove: remove,
+	  setRawCookie: setRawCookie,
+	  plugToRequest: plugToRequest
+	};
+
+	if (typeof window !== 'undefined') {
+	  window['reactCookie'] = reactCookie;
+	}
+
+	module.exports = reactCookie;
+
+
+/***/ },
+/* 419 */
+/***/ function(module, exports) {
+
+	/*!
+	 * cookie
+	 * Copyright(c) 2012-2014 Roman Shtylman
+	 * Copyright(c) 2015 Douglas Christopher Wilson
+	 * MIT Licensed
+	 */
+
+	/**
+	 * Module exports.
+	 * @public
+	 */
+
+	exports.parse = parse;
+	exports.serialize = serialize;
+
+	/**
+	 * Module variables.
+	 * @private
+	 */
+
+	var decode = decodeURIComponent;
+	var encode = encodeURIComponent;
+
+	/**
+	 * RegExp to match field-content in RFC 7230 sec 3.2
+	 *
+	 * field-content = field-vchar [ 1*( SP / HTAB ) field-vchar ]
+	 * field-vchar   = VCHAR / obs-text
+	 * obs-text      = %x80-FF
+	 */
+
+	var fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
+
+	/**
+	 * Parse a cookie header.
+	 *
+	 * Parse the given cookie header string into an object
+	 * The object has the various cookies as keys(names) => values
+	 *
+	 * @param {string} str
+	 * @param {object} [options]
+	 * @return {object}
+	 * @public
+	 */
+
+	function parse(str, options) {
+	  if (typeof str !== 'string') {
+	    throw new TypeError('argument str must be a string');
+	  }
+
+	  var obj = {}
+	  var opt = options || {};
+	  var pairs = str.split(/; */);
+	  var dec = opt.decode || decode;
+
+	  pairs.forEach(function(pair) {
+	    var eq_idx = pair.indexOf('=')
+
+	    // skip things that don't look like key=value
+	    if (eq_idx < 0) {
+	      return;
+	    }
+
+	    var key = pair.substr(0, eq_idx).trim()
+	    var val = pair.substr(++eq_idx, pair.length).trim();
+
+	    // quoted values
+	    if ('"' == val[0]) {
+	      val = val.slice(1, -1);
+	    }
+
+	    // only assign once
+	    if (undefined == obj[key]) {
+	      obj[key] = tryDecode(val, dec);
+	    }
+	  });
+
+	  return obj;
+	}
+
+	/**
+	 * Serialize data into a cookie header.
+	 *
+	 * Serialize the a name value pair into a cookie string suitable for
+	 * http headers. An optional options object specified cookie parameters.
+	 *
+	 * serialize('foo', 'bar', { httpOnly: true })
+	 *   => "foo=bar; httpOnly"
+	 *
+	 * @param {string} name
+	 * @param {string} val
+	 * @param {object} [options]
+	 * @return {string}
+	 * @public
+	 */
+
+	function serialize(name, val, options) {
+	  var opt = options || {};
+	  var enc = opt.encode || encode;
+
+	  if (!fieldContentRegExp.test(name)) {
+	    throw new TypeError('argument name is invalid');
+	  }
+
+	  var value = enc(val);
+
+	  if (value && !fieldContentRegExp.test(value)) {
+	    throw new TypeError('argument val is invalid');
+	  }
+
+	  var pairs = [name + '=' + value];
+
+	  if (null != opt.maxAge) {
+	    var maxAge = opt.maxAge - 0;
+	    if (isNaN(maxAge)) throw new Error('maxAge should be a Number');
+	    pairs.push('Max-Age=' + maxAge);
+	  }
+
+	  if (opt.domain) {
+	    if (!fieldContentRegExp.test(opt.domain)) {
+	      throw new TypeError('option domain is invalid');
+	    }
+
+	    pairs.push('Domain=' + opt.domain);
+	  }
+
+	  if (opt.path) {
+	    if (!fieldContentRegExp.test(opt.path)) {
+	      throw new TypeError('option path is invalid');
+	    }
+
+	    pairs.push('Path=' + opt.path);
+	  }
+
+	  if (opt.expires) pairs.push('Expires=' + opt.expires.toUTCString());
+	  if (opt.httpOnly) pairs.push('HttpOnly');
+	  if (opt.secure) pairs.push('Secure');
+
+	  return pairs.join('; ');
+	}
+
+	/**
+	 * Try decoding a string using a decoding function.
+	 *
+	 * @param {string} str
+	 * @param {function} decode
+	 * @private
+	 */
+
+	function tryDecode(str, decode) {
+	  try {
+	    return decode(str);
+	  } catch (e) {
+	    return str;
+	  }
 	}
 
 

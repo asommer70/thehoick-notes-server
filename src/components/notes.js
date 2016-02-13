@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import cookie from 'react-cookie';
 
 import NoteItem from './note_item';
 import Store from '../lib/store';
@@ -9,6 +10,10 @@ class Notes extends Component {
   constructor(props) {
     super(props);
     this.state = {notes: []};
+
+    if (!cookie.load('username')) {
+      this.props.history.push('/login');
+    }
 
     store.getNotes((error, notes) => {
       if (error) {

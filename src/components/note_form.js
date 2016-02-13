@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, browserHistory } from 'react-router'
+import cookie from 'react-cookie';
 
 import Store from '../lib/store';
 var store = new Store();
@@ -9,6 +10,10 @@ class NoteForm extends Component {
   constructor(props) {
     super(props);
     this.state = {id: '', title: '', text: '', user: {}, tags: [], new: true};
+
+    if (!cookie.load('username')) {
+      this.props.history.push('/login');
+    }
 
     if (props.route.path != '/notes/new') {
       store.findNote(this.props.params.id, (error, note) => {

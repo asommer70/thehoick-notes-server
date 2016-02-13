@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router'
+import cookie from 'react-cookie';
 
 import Store from '../lib/store';
 var store = new Store();
@@ -8,6 +9,10 @@ class Note extends Component {
   constructor(props) {
     super(props);
     this.state = {id: '', title: '', text: '', user: {}, tags: []};
+    
+    if (!cookie.load('username')) {
+      this.props.history.push('/login');
+    }
 
     store.findNote(this.props.params.id, (error, note) => {
       console.log('note:', note);

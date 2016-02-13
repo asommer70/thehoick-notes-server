@@ -95,6 +95,37 @@ class Store {
     });
   }
 
+  createUser(username, password, callback) {
+    var user = new Parse.User();
+    user.set('username', username);
+    user.set('password', password);
+
+    user.signUp(null, {
+      success: (user) => { t
+        callback(null, {user});
+      },
+      error: (user, error) => {
+        callback(error, {status: error.status});
+      }
+    });
+  }
+
+  signIn(username, password, callback) {
+    Parse.User.logIn(username, password, {
+      success: (user) => {
+        console.log('store.signIn user:', user);
+        callback(null, {user});
+      },
+      error: (user, error) => {
+        callback(error, {status: error.status});
+      }
+    });
+  }
+
+  signOut(username) {
+    // Parse.User.logout();
+    Parse.User.logOut();
+  }
 }
 
 export default Store;

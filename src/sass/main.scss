@@ -6,6 +6,11 @@
 @import '~bulma/bulma/components/components';
 @import '~bulma/bulma/layout/layout';
 
+#main {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
 label {
   display: block;
 }
@@ -26,4 +31,8 @@ label {
     margin: 0 5px;
     display: inline-block;
   }
+}
+
+.hidden {
+  display: none !important;
 }
