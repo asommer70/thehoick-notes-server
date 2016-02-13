@@ -1,0 +1,24 @@
+{
+  "name": "thehoick-notes-server",
+  "version": "0.0.1",
+  "description": "Server and web app for The Hoick Notes app.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asommer70/thehoick-notes-server.git"
+  },
+  "keywords": [
+    "node",
+    "react",
+    "parse"
+  ],
+  "author": "Adam Sommer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asommer70/thehoick-notes-server/issues"
+  },
+  "homepage": "https://github.com/asommer70/thehoick-notes-server#readme"
+}
