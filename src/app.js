@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router'
 
+import Notes from './components/notes';
+import Note from './components/note';
+import NoteForm from './components/note_form';
 
 const Base = React.createClass({
   render() {
@@ -26,11 +29,15 @@ const Base = React.createClass({
 })
 
 class App extends Component {
-  // var notes = [{_id: 1, title: 'Beans Note...'}, {_id: 2, title: 'Tacos note...'}];
   render() {
     return (
       <Router history={browserHistory}>
         <Route path="/" component={Base}>
+        <Route path="/notes" component={Notes}/>
+        <Route path="/notes/new" component={NoteForm}/>
+        <Route path="/notes/:id" component={Note}/>
+        <Route path="/notes/:id/edit" component={NoteForm}/>
+        <Route path="*" component={Notes}/>
         </Route>
       </Router>
     )

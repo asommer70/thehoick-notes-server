@@ -24,13 +24,22 @@ var api = new ParseServer({
 // Parse API path.
 app.use('/parse', api);
 
+// Setup the socket middleware.
 app.use(function (req, res, next) {
   console.log('middleware');
   req.testing = 'testing';
   return next();
 });
 
+// Default route using middleware... I think.
+app.use(function(req, res){
+  fs.readFile(__dirname + '/public/index.html', 'utf8', function(err, text){
+    res.send(text);
+    res.end();
+  });
+});
 
+// Serve the web app.
 app.get('/', function(req, res, next){
   console.log('get route', req.testing);
   fs.readFile(__dirname + '/public/index.html', 'utf8', function(err, text){
@@ -39,6 +48,7 @@ app.get('/', function(req, res, next){
   });
 });
 
+// Serve the Socket.
 app.ws('/', function(ws, req) {
   ws.on('message', function(msg) {
     console.log(msg);
