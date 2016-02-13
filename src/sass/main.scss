@@ -23,10 +23,10 @@ label {
 }
 
 .tag-info {
-  border: 1px solid rgb(105, 112, 122);
+  // border: 1px solid rgb(105, 112, 122);
   padding: 10px;
 }
-.tags {
+.tags, .users {
   li {
     margin: 0 5px;
     display: inline-block;
@@ -35,4 +35,12 @@ label {
 
 .hidden {
   display: none !important;
+}
+
+.share {
+  margin-top: 5px;
+}
+
+input.share {
+  width: 135px;
 }

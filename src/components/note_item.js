@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router'
 
 const NoteItem = ({note}) => {
+  console.log('note:', note.createdAt.getDate() - 1);
+  const created_at = `${note.createdAt.getMonth() + 1}-${note.createdAt.getDate() - 1}-${note.createdAt.getFullYear()}`;
   return (
     <li>
       <div className="columns">
@@ -14,15 +16,15 @@ const NoteItem = ({note}) => {
                   <p className="title is-5">
                     <Link to={`/notes/${note.id}`}>{note.get('title')}</Link>
                   </p>
-                  <p className="subtitle is-6">@noteauthor...</p>
                 </div>
               </div>
 
               <div className="content">
                 {note.get('text')}
-                <a href="#">#tag1</a> <a href="#">#tag2</a>
                 <br/>
-                <small>{note.created_at}</small>
+                <br/>
+                <p className="subtitle is-6">@{note.get('created_by')}</p>
+                <small>{created_at}</small>
               </div>
             </div>
           </div>

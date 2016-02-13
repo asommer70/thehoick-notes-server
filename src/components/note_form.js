@@ -10,7 +10,7 @@ class NoteForm extends Component {
   constructor(props) {
     super(props);
     this.username = cookie.load('username');
-    this.state = {id: '', title: '', text: '', users: [this.username], tags: [], new: true};
+    this.state = {id: '', title: '', text: '', users: [this.username], tags: [], created_by: this.username, new: true};
 
     if (!this.username) {
       this.props.history.push('/login');
@@ -25,6 +25,7 @@ class NoteForm extends Component {
           text: note.get('text'),
           users: note.get('users'),
           tags: note.get('tags'),
+          created_by: note.get('created_by'),
           new: false
         });
       });
@@ -52,7 +53,7 @@ class NoteForm extends Component {
       });
     } else {
       // Update Note.
-      if (!this.state.users.indexOf(this.username)) {
+      if (this.state.users.indexOf(this.username) === -1) {
         var users = this.state.users;
         users.push(this.username);
         this.setState({users: users}, () => {
@@ -128,7 +129,14 @@ class NoteForm extends Component {
 
             <div className="columns">
               <div className="column is-4">
-                User info...
+                <div className="user-info">
+                  <span className="subtitle">Users:</span>
+                  <ul className="users">
+                    {this.state.users.map((user, index) => {
+                      return <li key={index}>{user}</li>
+                    })}
+                  </ul>
+                </div>
               </div>
             </div>
 
