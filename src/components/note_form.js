@@ -27,6 +27,8 @@ class NoteForm extends Component {
           tags: note.get('tags'),
           created_by: note.get('created_by'),
           new: false
+        }, (note) => {
+          document.getElementById('text').style.height = document.getElementById('text').scrollHeight + 5 + 'px';
         });
       });
     }
