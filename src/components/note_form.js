@@ -9,9 +9,10 @@ var socket = io();
 class NoteForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {id: '', title: '', text: '', user: {}, tags: [], new: true};
+    this.username = cookie.load('username');
+    this.state = {id: '', title: '', text: '', users: [this.username], tags: [], new: true};
 
-    if (!cookie.load('username')) {
+    if (!this.username) {
       this.props.history.push('/login');
     }
 
@@ -22,7 +23,7 @@ class NoteForm extends Component {
           id: note.id,
           title: note.get('title'),
           text: note.get('text'),
-          user: note.get('user'),
+          users: note.get('users'),
           tags: note.get('tags'),
           new: false
         });
@@ -51,15 +52,31 @@ class NoteForm extends Component {
       });
     } else {
       // Update Note.
-      store.updateNote(this.state, (error, note) => {
-        if (error) {
-          console.log('saveNote error:', error);
-        }
-        console.log('saveNote updated note:', note);
-        this.setState({note});
-        console.log('this.props:', this.props);
-        this.props.history.push(`/notes/${note.id}`);
-      });
+      if (!this.state.users.indexOf(this.username)) {
+        var users = this.state.users;
+        users.push(this.username);
+        this.setState({users: users}, () => {
+          store.updateNote(this.state, (error, note) => {
+            if (error) {
+              console.log('saveNote error:', error);
+            }
+            console.log('saveNote updated note:', note);
+            this.setState({note});
+            console.log('this.props:', this.props);
+            this.props.history.push(`/notes/${note.id}`);
+          });
+        })
+      } else {
+        store.updateNote(this.state, (error, note) => {
+          if (error) {
+            console.log('saveNote error:', error);
+          }
+          console.log('saveNote updated note:', note);
+          this.setState({note});
+          console.log('this.props:', this.props);
+          this.props.history.push(`/notes/${note.id}`);
+        });
+      }
     }
   }
 

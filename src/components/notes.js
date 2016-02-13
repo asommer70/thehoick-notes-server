@@ -11,11 +11,12 @@ class Notes extends Component {
     super(props);
     this.state = {notes: []};
 
-    if (!cookie.load('username')) {
+    const username = cookie.load('username');
+    if (!username) {
       this.props.history.push('/login');
     }
 
-    store.getNotes((error, notes) => {
+    store.getNotes(username, (error, notes) => {
       if (error) {
         console.log('Notes store.getNotes error:', error);
       }

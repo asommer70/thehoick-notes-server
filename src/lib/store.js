@@ -8,8 +8,9 @@ class Store {
     Parse.serverURL = 'http://localhost:7070/parse/';
   }
 
-  getNotes(callback) {
+  getNotes(username, callback) {
     var query = new Parse.Query(ServerNotes);
+    query.containedIn('users', [username]);
 
     query.find({
       success: (results) => {

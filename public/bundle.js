@@ -24853,11 +24853,12 @@
 
 	    _this.state = { notes: [] };
 
-	    if (!_reactCookie2.default.load('username')) {
+	    var username = _reactCookie2.default.load('username');
+	    if (!username) {
 	      _this.props.history.push('/login');
 	    }
 
-	    store.getNotes(function (error, notes) {
+	    store.getNotes(username, function (error, notes) {
 	      if (error) {
 	        console.log('Notes store.getNotes error:', error);
 	      }
@@ -25007,8 +25008,9 @@
 
 	  _createClass(Store, [{
 	    key: 'getNotes',
-	    value: function getNotes(callback) {
+	    value: function getNotes(username, callback) {
 	      var query = new _parse2.default.Query(ServerNotes);
+	      query.containedIn('users', [username]);
 
 	      query.find({
 	        success: function success(results) {
@@ -36591,9 +36593,10 @@
 
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(NoteForm).call(this, props));
 
-	    _this.state = { id: '', title: '', text: '', user: {}, tags: [], new: true };
+	    _this.username = _reactCookie2.default.load('username');
+	    _this.state = { id: '', title: '', text: '', users: [_this.username], tags: [], new: true };
 
-	    if (!_reactCookie2.default.load('username')) {
+	    if (!_this.username) {
 	      _this.props.history.push('/login');
 	    }
 
@@ -36604,7 +36607,7 @@
 	          id: note.id,
 	          title: note.get('title'),
 	          text: note.get('text'),
-	          user: note.get('user'),
+	          users: note.get('users'),
 	          tags: note.get('tags'),
 	          new: false
 	        });
@@ -36638,15 +36641,31 @@
 	        });
 	      } else {
 	        // Update Note.
-	        store.updateNote(this.state, function (error, note) {
-	          if (error) {
-	            console.log('saveNote error:', error);
-	          }
-	          console.log('saveNote updated note:', note);
-	          _this2.setState({ note: note });
-	          console.log('this.props:', _this2.props);
-	          _this2.props.history.push('/notes/' + note.id);
-	        });
+	        if (!this.state.users.indexOf(this.username)) {
+	          var users = this.state.users;
+	          users.push(this.username);
+	          this.setState({ users: users }, function () {
+	            store.updateNote(_this2.state, function (error, note) {
+	              if (error) {
+	                console.log('saveNote error:', error);
+	              }
+	              console.log('saveNote updated note:', note);
+	              _this2.setState({ note: note });
+	              console.log('this.props:', _this2.props);
+	              _this2.props.history.push('/notes/' + note.id);
+	            });
+	          });
+	        } else {
+	          store.updateNote(this.state, function (error, note) {
+	            if (error) {
+	              console.log('saveNote error:', error);
+	            }
+	            console.log('saveNote updated note:', note);
+	            _this2.setState({ note: note });
+	            console.log('this.props:', _this2.props);
+	            _this2.props.history.push('/notes/' + note.id);
+	          });
+	        }
 	      }
 	    }
 	  }, {
