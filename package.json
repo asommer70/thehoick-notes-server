@@ -20,5 +20,12 @@
   "bugs": {
     "url": "https://github.com/asommer70/thehoick-notes-server/issues"
   },
-  "homepage": "https://github.com/asommer70/thehoick-notes-server#readme"
+  "homepage": "https://github.com/asommer70/thehoick-notes-server#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "express-ws": "^0.2.6",
+    "parse-server": "^2.0.8",
+    "serve-favicon": "^2.3.0",
+    "websocket": "^1.0.22"
+  }
 }
