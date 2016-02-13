@@ -4,6 +4,7 @@
   "description": "Server and web app for The Hoick Notes app.",
   "main": "server.js",
   "scripts": {
+    "start": "./node_modules/.bin/webpack --progress --colors --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,10 +23,25 @@
   },
   "homepage": "https://github.com/asommer70/thehoick-notes-server#readme",
   "dependencies": {
+    "bulma": "0.0.12",
     "express": "^4.13.4",
     "express-ws": "^0.2.6",
     "parse-server": "^2.0.8",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-router": "^2.0.0",
     "serve-favicon": "^2.3.0",
     "websocket": "^1.0.22"
+  },
+  "devDependencies": {
+    "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.2",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0",
+    "css-loader": "^0.23.1",
+    "node-sass": "^3.4.2",
+    "sass-loader": "^3.1.2",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.13"
   }
 }

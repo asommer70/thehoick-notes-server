@@ -5,13 +5,17 @@ var fs = require('fs');
 
 var app = express();
 app.use(favicon(__dirname + '/public/favicon.ico'));
+var expressWs = require('express-ws')(app);
+
+// GET /assets (static files).
+app.use('/assets', express.static(__dirname + '/public'));
 
 // Setup the Parse goodness.
 var api = new ParseServer({
   databaseURI: 'mongodb://localhost:27017/thehoick',
   cloud: '/Users/adam/work/thehoick-notes/thehoick-notes-server/cloud/main.js',
   appId: 'com.thehoick.parse',
-  masterKey: 'pareykey',
+  masterKey: 'parseykey',
   clientKey: 'clientHoickKey',
   fileKey: 'fileHoickKey',
   javascriptKey: 'jsHoickKey'
@@ -20,11 +24,27 @@ var api = new ParseServer({
 // Parse API path.
 app.use('/parse', api);
 
-
-app.get('/', function(req, res) {
-  res.status(200).send('Express is running here.');
+app.use(function (req, res, next) {
+  console.log('middleware');
+  req.testing = 'testing';
+  return next();
 });
 
+
+app.get('/', function(req, res, next){
+  console.log('get route', req.testing);
+  fs.readFile(__dirname + '/public/index.html', 'utf8', function(err, text){
+    res.send(text);
+    res.end();
+  });
+});
+
+app.ws('/', function(ws, req) {
+  ws.on('message', function(msg) {
+    console.log(msg);
+  });
+  console.log('socket', req.testing);
+});
 
 // Fire up the server.
 var port = process.env.PORT || 7070;
