@@ -29,6 +29,13 @@ const Base = React.createClass({
 })
 
 class App extends Component {
+  // static contextTypes = {
+  // router: React.PropTypes.object.isRequired
+  // }
+  constructor() {
+    super();
+  }
+
   render() {
     return (
       <Router history={browserHistory}>

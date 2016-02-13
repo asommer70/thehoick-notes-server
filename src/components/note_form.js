@@ -3,13 +3,13 @@ import { Link, browserHistory } from 'react-router'
 
 import Store from '../lib/store';
 var store = new Store();
+var socket = io();
 
 class NoteForm extends Component {
   constructor(props) {
     super(props);
     this.state = {id: '', title: '', text: '', user: {}, tags: [], new: true};
 
-    console.log('props:', props);
     if (props.route.path != '/notes/new') {
       store.findNote(this.props.params.id, (error, note) => {
         console.log('note:', note);
@@ -24,13 +24,13 @@ class NoteForm extends Component {
       });
     }
 
-    // socket.on('text-entered', (obj) => {
-    //   console.log('txt:', obj.txt, 'name:', obj.name);
-    //
-    //   var newState = {};
-    //   newState[obj.name] = obj.txt;
-    //   this.setState(newState);
-    // });
+    socket.on('text-entered', (obj) => {
+      console.log('txt:', obj.txt, 'name:', obj.name);
+
+      var newState = {};
+      newState[obj.name] = obj.txt;
+      this.setState(newState);
+    });
   }
 
   saveNote(event) {
@@ -42,7 +42,7 @@ class NoteForm extends Component {
           console.log('saveNote error:', error);
         }
         this.setState({note});
-        this.props.history.pushState(null, '/notes');
+        this.props.history.push('/notes');
       });
     } else {
       // Update Note.
@@ -52,7 +52,8 @@ class NoteForm extends Component {
         }
         console.log('saveNote updated note:', note);
         this.setState({note});
-        this.props.history.pushState(null, `/notes/${note.id}`);
+        console.log('this.props:', this.props);
+        this.props.history.push(`/notes/${note.id}`);
       });
     }
   }
@@ -61,7 +62,7 @@ class NoteForm extends Component {
     console.log('deleting note...');
     store.deleteNote(this.state, (status) => {
       console.log('deleteNote status:', status);
-      this.props.history.pushState(null, '/notes');
+      this.props.history.push('/notes');
     });
   }
 
@@ -72,6 +73,8 @@ class NoteForm extends Component {
     var newState = {};
     newState[event.target.name] = event.target.value;
     this.setState(newState);
+    // this.socket.send('message', 'I am the client and I\'m listening!');
+    this.socket.send(event.target.value);
   }
 
   render() {
@@ -89,7 +92,7 @@ class NoteForm extends Component {
               <div className="column is-4">
                 <label htmlFor="title">{this.state.new ? '' : 'Title'}</label>
                 <input name="title" id="title" type="text" placeholder="Title" value={this.state.title}
-                  onChange={event => this.onChange(event)} />
+                  onChange={event => socket.emit('text-entered', {txt: event.target.value, name: event.target.name})} />
               </div>
             </div>
 
@@ -97,7 +100,7 @@ class NoteForm extends Component {
               <div className="column is-4">
                 <label htmlFor="text">{this.state.new ? '' : 'Text'}</label>
                 <textarea name="text" id="text" placeholder="Text" value={this.state.text}
-                  onChange={event => this.onChange(event)}></textarea>
+                  onChange={event => socket.emit('text-entered', {txt: event.target.value, name: event.target.name})}></textarea>
               </div>
             </div>
 

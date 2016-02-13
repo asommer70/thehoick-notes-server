@@ -2,10 +2,14 @@ var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var favicon = require('serve-favicon');
 var fs = require('fs');
+var http = require('http')
 
 var app = express();
 app.use(favicon(__dirname + '/public/favicon.ico'));
-var expressWs = require('express-ws')(app);
+
+// Setup Socket.io server from the Express app.
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 
 // GET /assets (static files).
 app.use('/assets', express.static(__dirname + '/public'));
@@ -24,13 +28,6 @@ var api = new ParseServer({
 // Parse API path.
 app.use('/parse', api);
 
-// Setup the socket middleware.
-app.use(function (req, res, next) {
-  console.log('middleware');
-  req.testing = 'testing';
-  return next();
-});
-
 // Default route using middleware... I think.
 app.use(function(req, res){
   fs.readFile(__dirname + '/public/index.html', 'utf8', function(err, text){
@@ -48,16 +45,18 @@ app.get('/', function(req, res, next){
   });
 });
 
-// Serve the Socket.
-app.ws('/', function(ws, req) {
-  ws.on('message', function(msg) {
-    console.log(msg);
+// Open web socket.
+io.on('connection', function(socket){
+  // console.log('a user connected:', socket.request.headers['user-agent']);
+
+  socket.on('text-entered', function(obj){
+    console.log('txt: ' + obj.txt, 'name:', obj.name);
+    io.emit('text-entered', obj);
   });
-  console.log('socket', req.testing);
 });
 
 // Fire up the server.
 var port = process.env.PORT || 7070;
-app.listen(port, '0.0.0.0', function() {
+server.listen(port, '0.0.0.0', function() {
   console.log('thehoick-notes-server running on port ' + port + '.');
 });
