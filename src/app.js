@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router'
+import cookie from 'react-cookie';
 
 import Notes from './components/notes';
 import Note from './components/note';
@@ -15,6 +16,9 @@ const Base = React.createClass({
       <div className="columns">
         <div className="column is-2">
           <h1 className="title">The Hoick Notes</h1>
+          <p>
+            {cookie.load('username') ? `Welcome ${cookie.load('username')}`: ''}
+          </p>
         </div>
         <div className="column is-8">
 

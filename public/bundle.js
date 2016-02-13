@@ -66,6 +66,10 @@
 
 	var _reactRouter = __webpack_require__(160);
 
+	var _reactCookie = __webpack_require__(218);
+
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+
 	var _notes = __webpack_require__(217);
 
 	var _notes2 = _interopRequireDefault(_notes);
@@ -111,6 +115,11 @@
 	          'h1',
 	          { className: 'title' },
 	          'The Hoick Notes'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          _reactCookie2.default.load('username') ? 'Welcome ' + _reactCookie2.default.load('username') : ''
 	        )
 	      ),
 	      _react2.default.createElement(
