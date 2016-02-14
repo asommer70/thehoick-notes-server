@@ -10,8 +10,7 @@ class NoteForm extends Component {
   constructor(props) {
     super(props);
     this.username = cookie.load('username');
-    this.state = {id: '', title: '', text: '', users: [this.username], tags: [], created_by: this.username, new: true};
-
+    this.state = {id: '', title: '', text: '', users: [this.username], tags: [], created_by: this.username, new: true, currentUsers: [this.username]};
     if (!this.username) {
       this.props.history.push('/login');
     }
@@ -28,6 +27,8 @@ class NoteForm extends Component {
           created_by: note.get('created_by'),
           new: false
         }, (note) => {
+          console.log('this.state.currentUsers:', this.state.currentUsers);
+
           document.getElementById('text').style.height = document.getElementById('text').scrollHeight + 5 + 'px';
         });
       });
@@ -36,9 +37,19 @@ class NoteForm extends Component {
     socket.on('text-entered', (obj) => {
       console.log('txt:', obj.txt, 'name:', obj.name);
 
-      var newState = {};
-      newState[obj.name] = obj.txt;
-      this.setState(newState);
+      if (obj.platform != 'web') {
+        var newState = {};
+        newState[obj.name] = obj.txt;
+
+        // Add the new Note user if it's they're not already in the list.
+        var currentUsers = this.state.currentUsers;
+        if (currentUsers.indexOf(obj.username) === -1) {
+          currentUsers.push(obj.username);
+          newState.currentUsers = currentUsers;
+        }
+
+        this.setState(newState);
+      }
     });
   }
 
@@ -91,15 +102,14 @@ class NoteForm extends Component {
     });
   }
 
-  onChange(event) {
-    // this.setState({title: event.target.value})
-    // socket.emit('text-entered', event);
-    console.log('event:', event.target.name);
-    var newState = {};
-    newState[event.target.name] = event.target.value;
-    this.setState(newState);
-    // this.socket.send('message', 'I am the client and I\'m listening!');
-    this.socket.send(event.target.value);
+  textChange(event) {
+    this.setState({text: event.target.value});
+    socket.emit('text-entered', {txt: event.target.value, name: event.target.name, platform: 'web', username: this.username});
+  }
+
+  textChange(event) {
+    this.setState({text: event.target.value});
+    socket.emit('text-entered', {txt: event.target.value, name: event.target.name, platform: 'web', username: this.username});
   }
 
   render() {
@@ -117,7 +127,7 @@ class NoteForm extends Component {
               <div className="column is-4">
                 <label htmlFor="title">{this.state.new ? '' : 'Title'}</label>
                 <input name="title" id="title" type="text" placeholder="Title" value={this.state.title}
-                  onChange={event => socket.emit('text-entered', {txt: event.target.value, name: event.target.name})} />
+                  onChange={event => this.titleChange(event).bind(this)} />
               </div>
             </div>
 
@@ -125,7 +135,7 @@ class NoteForm extends Component {
               <div className="column is-4">
                 <label htmlFor="text">{this.state.new ? '' : 'Text'}</label>
                 <textarea name="text" id="text" placeholder="Text" value={this.state.text}
-                  onChange={event => socket.emit('text-entered', {txt: event.target.value, name: event.target.name})}></textarea>
+                  onChange={event => this.textChange(event).bind(this)}></textarea>
               </div>
             </div>
 
@@ -136,6 +146,21 @@ class NoteForm extends Component {
                   <ul className="users">
                     {this.state.users.map((user, index) => {
                       return <li key={index}>{user}</li>
+                    })}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="columns">
+              <div className="column is-4">
+                <div className="user-info">
+                  <span className="subtitle">Current Users:</span>
+                  <ul className="users">
+                    {this.state.currentUsers.map((user, index) => {
+                      return <li key={index}>
+                        <span className="tag is-warning">{user}</span>
+                      </li>
                     })}
                   </ul>
                 </div>

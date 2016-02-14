@@ -36960,8 +36960,7 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(NoteForm).call(this, props));
 
 	    _this.username = _reactCookie2.default.load('username');
-	    _this.state = { id: '', title: '', text: '', users: [_this.username], tags: [], created_by: _this.username, new: true };
-
+	    _this.state = { id: '', title: '', text: '', users: [_this.username], tags: [], created_by: _this.username, new: true, currentUsers: [_this.username] };
 	    if (!_this.username) {
 	      _this.props.history.push('/login');
 	    }
@@ -36978,6 +36977,8 @@
 	          created_by: note.get('created_by'),
 	          new: false
 	        }, function (note) {
+	          console.log('this.state.currentUsers:', _this.state.currentUsers);
+
 	          document.getElementById('text').style.height = document.getElementById('text').scrollHeight + 5 + 'px';
 	        });
 	      });
@@ -36986,9 +36987,19 @@
 	    socket.on('text-entered', function (obj) {
 	      console.log('txt:', obj.txt, 'name:', obj.name);
 
-	      var newState = {};
-	      newState[obj.name] = obj.txt;
-	      _this.setState(newState);
+	      if (obj.platform != 'web') {
+	        var newState = {};
+	        newState[obj.name] = obj.txt;
+
+	        // Add the new Note user if it's they're not already in the list.
+	        var currentUsers = _this.state.currentUsers;
+	        if (currentUsers.indexOf(obj.username) === -1) {
+	          currentUsers.push(obj.username);
+	          newState.currentUsers = currentUsers;
+	        }
+
+	        _this.setState(newState);
+	      }
 	    });
 	    return _this;
 	  }
@@ -37049,20 +37060,22 @@
 	      });
 	    }
 	  }, {
-	    key: 'onChange',
-	    value: function onChange(event) {
-	      // this.setState({title: event.target.value})
-	      // socket.emit('text-entered', event);
-	      console.log('event:', event.target.name);
-	      var newState = {};
-	      newState[event.target.name] = event.target.value;
-	      this.setState(newState);
-	      // this.socket.send('message', 'I am the client and I\'m listening!');
-	      this.socket.send(event.target.value);
+	    key: 'textChange',
+	    value: function textChange(event) {
+	      this.setState({ text: event.target.value });
+	      socket.emit('text-entered', { txt: event.target.value, name: event.target.name, platform: 'web', username: this.username });
+	    }
+	  }, {
+	    key: 'textChange',
+	    value: function textChange(event) {
+	      this.setState({ text: event.target.value });
+	      socket.emit('text-entered', { txt: event.target.value, name: event.target.name, platform: 'web', username: this.username });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this4 = this;
+
 	      var deleteButton = _react2.default.createElement('span', null);
 	      if (!this.state.new) {
 	        deleteButton = _react2.default.createElement('input', { type: 'submit', className: 'button is-small is-outlined is-danger', value: 'Delete Note', onClick: this.deleteNote.bind(this) });
@@ -37095,7 +37108,7 @@
 	                ),
 	                _react2.default.createElement('input', { name: 'title', id: 'title', type: 'text', placeholder: 'Title', value: this.state.title,
 	                  onChange: function onChange(event) {
-	                    return socket.emit('text-entered', { txt: event.target.value, name: event.target.name });
+	                    return _this4.titleChange(event).bind(_this4);
 	                  } })
 	              )
 	            ),
@@ -37112,7 +37125,7 @@
 	                ),
 	                _react2.default.createElement('textarea', { name: 'text', id: 'text', placeholder: 'Text', value: this.state.text,
 	                  onChange: function onChange(event) {
-	                    return socket.emit('text-entered', { txt: event.target.value, name: event.target.name });
+	                    return _this4.textChange(event).bind(_this4);
 	                  } })
 	              )
 	            ),
@@ -37138,6 +37151,38 @@
 	                        'li',
 	                        { key: index },
 	                        user
+	                      );
+	                    })
+	                  )
+	                )
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'columns' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'column is-4' },
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'user-info' },
+	                  _react2.default.createElement(
+	                    'span',
+	                    { className: 'subtitle' },
+	                    'Current Users:'
+	                  ),
+	                  _react2.default.createElement(
+	                    'ul',
+	                    { className: 'users' },
+	                    this.state.currentUsers.map(function (user, index) {
+	                      return _react2.default.createElement(
+	                        'li',
+	                        { key: index },
+	                        _react2.default.createElement(
+	                          'span',
+	                          { className: 'tag is-warning' },
+	                          user
+	                        )
 	                      );
 	                    })
 	                  )
